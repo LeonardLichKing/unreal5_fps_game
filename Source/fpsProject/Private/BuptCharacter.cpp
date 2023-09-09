@@ -57,6 +57,18 @@ void ABuptCharacter::MoveRight(float value)
 	AddMovementInput(RightVector, value);
 }
 
+void ABuptCharacter::PrimaryAttack()
+{
+	FVector HandLocation=GetMesh()->GetSocketLocation("Muzzle_01");
+
+	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);//para1表示获得控制器面向的方向，para2表示发射位置
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;//不考虑发射物体是否会碰撞的问题
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass,SpawnTM, SpawnParams);
+}
+
 // Called every frame
 void ABuptCharacter::Tick(float DeltaTime)
 {
@@ -74,5 +86,7 @@ void ABuptCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Lookup", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ABuptCharacter::PrimaryAttack);
 }
 

@@ -16,6 +16,11 @@ class FPSPROJECT_API ABuptCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY(EditAnywhere);//使得可以在ue编辑器中进行设置和编辑
+	TSubclassOf<AActor>ProjectileClass;
+
 public:
 	// Sets default values for this character's properties
 	ABuptCharacter();
@@ -31,6 +36,7 @@ protected:
 
 	void MoveForward(float value);
 	void MoveRight(float value);
+	void PrimaryAttack();
 
 public:	
 	// Called every frame
