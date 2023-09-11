@@ -42,6 +42,7 @@ void ABuptCharacter::MoveForward(float value)
 	AddMovementInput(ControlRot.Vector(), value);//将移动方向调整为controller的方向，而不是角色自身的方向
 }
 
+
 void ABuptCharacter::MoveRight(float value)
 {
 	FRotator ControlRot = GetControlRotation();
@@ -57,6 +58,7 @@ void ABuptCharacter::MoveRight(float value)
 	AddMovementInput(RightVector, value);
 }
 
+
 void ABuptCharacter::PrimaryAttack()
 {
 	FVector HandLocation=GetMesh()->GetSocketLocation("Muzzle_01");
@@ -67,6 +69,14 @@ void ABuptCharacter::PrimaryAttack()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;//不考虑发射物体是否会碰撞的问题
 
 	GetWorld()->SpawnActor<AActor>(ProjectileClass,SpawnTM, SpawnParams);
+}
+
+void ABuptCharacter::Jump()
+{
+	if (CanJump())
+	{
+		LaunchCharacter(FVector(0.0f, 0.0f, 500.0f), false, false);
+	}
 }
 
 // Called every frame
@@ -84,9 +94,11 @@ void ABuptCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("MoveForward",this,&ABuptCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABuptCharacter::MoveRight);
 
+
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Lookup", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ABuptCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABuptCharacter::Jump);
 }
 
