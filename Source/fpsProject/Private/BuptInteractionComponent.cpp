@@ -3,6 +3,8 @@
 
 #include "BuptInteractionComponent.h"
 #include "BuptGamePlayInterface.h"
+#include "DrawDebugHelpers.h"
+
 
 // Sets default values for this component's properties
 UBuptInteractionComponent::UBuptInteractionComponent()
@@ -40,9 +42,6 @@ void UBuptInteractionComponent::PrimaryInteract()
 
 	AActor* MyOwner = GetOwner();
 
-	//FVector Start;我们可以直接使用eyelocation来代替射线的起点位置，可以理解为从眼睛发射一条有固定距离的线
-	//当这条线的末端与treasure chest发生hit事件时，treasure chest就触发打开的事件
-
 	FVector EyeLocation;
 	FRotator EyeRotation;
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
@@ -50,18 +49,38 @@ void UBuptInteractionComponent::PrimaryInteract()
 	FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
 
 
-	FHitResult Hit;
-	GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
+	//FHitResult Hit;
+	//bool bBlockingHit=GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
 
-	AActor* HitActor = Hit.GetActor();
-	if (HitActor)
+	TArray<FHitResult> Hits;
+
+	float Radius = 30.0f;
+
+	FCollisionShape Shape;
+	Shape.SetSphere(Radius);
+
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	
+	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
+
+	for (FHitResult Hit : Hits)
 	{
-		if (HitActor->Implements<UBuptGamePlayInterface>())
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor)
 		{
-			APawn* MyPawn = Cast<APawn>(MyOwner);
+			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColor, false, 2.0f);
+			
+			if (HitActor->Implements<UBuptGamePlayInterface>())
+			{
+				APawn* MyPawn = Cast<APawn>(MyOwner);
 
-			IBuptGamePlayInterface::Execute_Interact(HitActor, MyPawn);
-
+				IBuptGamePlayInterface::Execute_Interact(HitActor, MyPawn);
+				break;
+			}
 		}
 	}
+
+	
+	
+	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
 }
