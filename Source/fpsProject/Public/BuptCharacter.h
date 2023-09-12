@@ -8,7 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
-
+class UBuptInteractionComponent;
 
 
 UCLASS()
@@ -26,11 +26,14 @@ public:
 	ABuptCharacter();
 
 protected:
-	UPROPERTY(VisibleAnywhere);
+	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
-	UPROPERTY(VisibleAnywhere);
+	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere)
+	UBuptInteractionComponent* InteractionComp;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -38,7 +41,7 @@ protected:
 	void MoveRight(float value);
 	void PrimaryAttack();
 	void Jump();
-
+	void PrimaryInteract();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

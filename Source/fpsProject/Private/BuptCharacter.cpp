@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BuptInteractionComponent.h"
 
 // Sets default values
 ABuptCharacter::ABuptCharacter()
@@ -18,6 +19,8 @@ ABuptCharacter::ABuptCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	InteractionComp = CreateDefaultSubobject<UBuptInteractionComponent>("InteractionComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;//让charactor自动转向控制移动的方向
 
@@ -79,6 +82,14 @@ void ABuptCharacter::Jump()
 	}
 }
 
+void ABuptCharacter::PrimaryInteract()
+{
+	if (InteractionComp)
+	{
+		InteractionComp->PrimaryInteract();
+	}
+}
+
 // Called every frame
 void ABuptCharacter::Tick(float DeltaTime)
 {
@@ -100,5 +111,6 @@ void ABuptCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ABuptCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABuptCharacter::Jump);
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ABuptCharacter::PrimaryInteract);
 }
 
