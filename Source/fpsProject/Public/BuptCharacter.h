@@ -9,7 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UBuptInteractionComponent;
-
+class UAnimMontage;
 
 UCLASS()
 class FPSPROJECT_API ABuptCharacter : public ACharacter
@@ -18,9 +18,13 @@ class FPSPROJECT_API ABuptCharacter : public ACharacter
 
 protected:
 
-	UPROPERTY(EditAnywhere);//使得可以在ue编辑器中进行设置和编辑
+	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
 	TSubclassOf<AActor>ProjectileClass;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackAnim;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
 public:
 	// Sets default values for this character's properties
 	ABuptCharacter();
@@ -38,9 +42,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
+
 	void MoveRight(float value);
+
 	void PrimaryAttack();
+
+	void PrimaryAttack_TimeElapsed();
+
 	void Jump();
+
 	void PrimaryInteract();
 public:	
 	// Called every frame
