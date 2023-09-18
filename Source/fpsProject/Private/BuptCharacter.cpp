@@ -94,7 +94,7 @@ void ABuptCharacter::PrimaryAttack_TimeElapsed()
 	FVector End = CameraLocation + (CameraRotator.Vector() * AttackRange);
 
 	bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, ObjectQueryParams);
-	DrawDebugLine(GetWorld(), CameraLocation, End, FColor::Red, true, 2.0f, 0, 2.0f);
+	//DrawDebugLine(GetWorld(), CameraLocation, End, FColor::Red, true, 2.0f, 0, 2.0f);
 
 
 	FTransform SpawnTM;
@@ -106,21 +106,15 @@ void ABuptCharacter::PrimaryAttack_TimeElapsed()
 		//如果射线被阻挡，说明遇到了障碍物，此时Hit记录的是block的信息
 		FVector HitPoint = Hit.ImpactPoint;
 		Bias = UKismetMathLibrary::FindLookAtRotation(HandLocation, HitPoint);
-		DrawDebugSphere(GetWorld(), HitPoint, 20.0f, 16, FColor::Red, true);
+		//DrawDebugSphere(GetWorld(), HitPoint, 20.0f, 16, FColor::Red, true);
 	}
 	else
 	{
 		Bias = UKismetMathLibrary::FindLookAtRotation(HandLocation, End);
 	}
 
-	FRotator ActualRotation = GetControlRotation() + Bias;
 
-	SpawnTM = FTransform(ActualRotation, HandLocation);//para1表示获得控制器面向的方向，para2表示发射位置
-
-	//------------------debug-----------------------
-	FVector SpawnEnd = HandLocation + (ActualRotation.Vector() * AttackRange);
-	DrawDebugLine(GetWorld(), HandLocation, SpawnEnd, FColor::Green, true, 2.0f, 0, 2.0f);
-	//------------------debug-----------------------
+	SpawnTM = FTransform(Bias, HandLocation);//para1表示获得控制器面向的方向，para2表示发射位置
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;//不考虑发射物体是否会碰撞的问题
