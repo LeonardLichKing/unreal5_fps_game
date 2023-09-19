@@ -64,17 +64,7 @@ void ABuptCharacter::MoveRight(float value)
 	AddMovementInput(RightVector, value);
 }
 
-
-void ABuptCharacter::PrimaryAttack()
-{
-	
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ABuptCharacter::PrimaryAttack_TimeElapsed, 0.2f);
-
-}
-
-void ABuptCharacter::PrimaryAttack_TimeElapsed()
+void ABuptCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
@@ -90,7 +80,7 @@ void ABuptCharacter::PrimaryAttack_TimeElapsed()
 	FRotator CameraRotator = CameraComp->GetComponentRotation();
 
 	//射线的长度由角色的攻击范围决定
-	int AttackRange=5000;
+	int AttackRange = 5000;
 	FVector End = CameraLocation + (CameraRotator.Vector() * AttackRange);
 
 	bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, ObjectQueryParams);
@@ -103,7 +93,7 @@ void ABuptCharacter::PrimaryAttack_TimeElapsed()
 
 	if (bBlockingHit)
 	{
-		//如果射线被阻挡，说明遇到了障碍物，此时Hit记录的是block的信息
+		//如果射线被阻挡，说明遇到了障碍物，发生了碰撞
 		FVector HitPoint = Hit.ImpactPoint;
 		Bias = UKismetMathLibrary::FindLookAtRotation(HandLocation, HitPoint);
 		//DrawDebugSphere(GetWorld(), HitPoint, 20.0f, 16, FColor::Red, true);
@@ -120,7 +110,34 @@ void ABuptCharacter::PrimaryAttack_TimeElapsed()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;//不考虑发射物体是否会碰撞的问题
 	SpawnParams.Instigator = this;
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
+}
+
+
+void ABuptCharacter::PrimaryAttack()
+{
+	
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ABuptCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+
+}
+
+void ABuptCharacter::PrimaryAttack_TimeElapsed()
+{
+	SpawnProjectile(ProjectileClass);
+}
+
+void ABuptCharacter::BlackHole()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackHole, this, &ABuptCharacter::BlackHole_TimeElapsed, 0.2f);
+}
+
+void ABuptCharacter::BlackHole_TimeElapsed()
+{
+	SpawnProjectile(ProjectileClassBlackHole);
 }
 
 void ABuptCharacter::Jump()
@@ -161,5 +178,6 @@ void ABuptCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ABuptCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABuptCharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ABuptCharacter::PrimaryInteract);
+	PlayerInputComponent->BindAction("BlackHole", IE_Pressed, this, &ABuptCharacter::BlackHole);
 }
 
