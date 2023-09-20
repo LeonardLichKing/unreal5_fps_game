@@ -24,12 +24,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
 	TSubclassOf<AActor>ProjectileClassBlackHole;
 
+	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
+	TSubclassOf<AActor>ProjectileClassDash;
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
 	FTimerHandle TimerHandle_BlackHole;
+
+	FTimerHandle TimerHandle_Dash;
 public:
 	// Sets default values for this character's properties
 	ABuptCharacter();
@@ -59,6 +64,10 @@ protected:
 	void BlackHole();
 
 	void BlackHole_TimeElapsed();
+
+	void Dash();
+
+	void Dash_TimeElapsed();
 
 	void Jump();
 

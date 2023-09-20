@@ -140,6 +140,18 @@ void ABuptCharacter::BlackHole_TimeElapsed()
 	SpawnProjectile(ProjectileClassBlackHole);
 }
 
+void ABuptCharacter::Dash()
+{
+	PlayAnimMontage(AttackAnim);
+	
+	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &ABuptCharacter::Dash_TimeElapsed, 0.2f);
+}
+
+void ABuptCharacter::Dash_TimeElapsed()
+{
+	SpawnProjectile(ProjectileClassDash);
+}
+
 void ABuptCharacter::Jump()
 {
 	if (CanJump())
@@ -179,5 +191,6 @@ void ABuptCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ABuptCharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ABuptCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("BlackHole", IE_Pressed, this, &ABuptCharacter::BlackHole);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABuptCharacter::Dash);
 }
 
