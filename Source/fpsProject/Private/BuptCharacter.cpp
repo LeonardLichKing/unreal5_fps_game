@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BuptInteractionComponent.h"
+#include "BuptAttributeComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "DrawDebugHelpers.h"
 
@@ -24,6 +25,8 @@ ABuptCharacter::ABuptCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComp = CreateDefaultSubobject<UBuptInteractionComponent>("InteractionComp");
+
+	AttributeComp=CreateDefaultSubobject<UBuptAttributeComponent>("AttributeComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;//让charactor自动转向控制移动的方向
 

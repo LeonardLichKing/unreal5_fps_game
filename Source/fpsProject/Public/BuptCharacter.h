@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UBuptInteractionComponent;
 class UAnimMontage;
+class UBuptAttributeComponent;
 
 UCLASS()
 class FPSPROJECT_API ABuptCharacter : public ACharacter
@@ -48,6 +49,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UBuptInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UBuptAttributeComponent* AttributeComp;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "BuptAttributeComponent.h"
 
 // Sets default values
 ABuptMagicProjectile::ABuptMagicProjectile()
@@ -14,6 +15,7 @@ ABuptMagicProjectile::ABuptMagicProjectile()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ABuptMagicProjectile::OnActorOverlap);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
@@ -23,6 +25,20 @@ ABuptMagicProjectile::ABuptMagicProjectile()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+}
+
+void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+	{
+		UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
+		if (AttributeComp)
+		{
+			AttributeComp->ApplyHealthChange(-20.0f);
+
+			Destroy();
+		}
+	}
 }
 
 // Called when the game starts or when spawned
