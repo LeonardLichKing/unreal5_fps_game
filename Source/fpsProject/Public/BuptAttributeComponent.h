@@ -7,6 +7,9 @@
 #include "BuptAttributeComponent.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, UBuptAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FPSPROJECT_API UBuptAttributeComponent : public UActorComponent
 {
@@ -22,6 +25,9 @@ protected:
 	float Health;
 
 public:	
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(float Delta);
