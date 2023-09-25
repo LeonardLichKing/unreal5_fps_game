@@ -29,7 +29,7 @@ ABuptMagicProjectile::ABuptMagicProjectile()
 
 void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
+	if (OtherActor&&OtherActor!=GetInstigator())
 	{
 		UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
 		if (AttributeComp)
