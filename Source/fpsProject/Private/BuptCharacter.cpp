@@ -77,9 +77,17 @@ void ABuptCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 		FCollisionObjectQueryParams ObjectQueryParams;
 		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
 		FHitResult Hit;
 
+		FCollisionShape Shape;
+		Shape.SetSphere(20.0f);
+
+		//无视player
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+		
 		//由于相机的旋转是与控制器的旋转绑定的，所以可以直接通过获得相机的位置和方向来获得准心的位置与朝向
 		FVector CameraLocation = CameraComp->GetComponentLocation();
 		FRotator CameraRotator = CameraComp->GetComponentRotation();
@@ -88,7 +96,7 @@ void ABuptCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 		int AttackRange = 5000;
 		FVector End = CameraLocation + (CameraRotator.Vector() * AttackRange);
 
-		bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, End, ObjectQueryParams);
+		bool bBlockingHit = GetWorld()->SweepSingleByObjectType(Hit, CameraLocation, End, FQuat::Identity,ObjectQueryParams,Shape,Params);
 		//DrawDebugLine(GetWorld(), CameraLocation, End, FColor::Red, true, 2.0f, 0, 2.0f);
 
 
