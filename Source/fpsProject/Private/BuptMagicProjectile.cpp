@@ -30,6 +30,7 @@ ABuptMagicProjectile::ABuptMagicProjectile()
 
 	LoopedAudioComp=CreateDefaultSubobject<UAudioComponent>("LoopedAudioComp");
 	ImpactAudioComp=CreateDefaultSubobject<UAudioComponent>("ImpactAudioComp");
+	//it seems like the audio will autoplay when AudioComponent construct.
 }
 
 void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
