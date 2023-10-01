@@ -6,6 +6,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "BuptAttributeComponent.h"
+#include "Components/AudioComponent.h"
+#include "Kismet/GamePlayStatics.h"
 
 // Sets default values
 ABuptMagicProjectile::ABuptMagicProjectile()
@@ -25,12 +27,19 @@ ABuptMagicProjectile::ABuptMagicProjectile()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+
+	LoopedAudioComp=CreateDefaultSubobject<UAudioComponent>("LoopedAudioComp");
+	ImpactAudioComp=CreateDefaultSubobject<UAudioComponent>("ImpactAudioComp");
 }
 
 void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor&&OtherActor!=GetInstigator())
 	{
+		LoopedAudioComp->Stop();
+
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(),ImpactAudioComp->GetSound(),GetActorLocation(),GetActorRotation());
+		
 		UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
@@ -45,13 +54,13 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 void ABuptMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	LoopedAudioComp->Play();
 }
 
 // Called every frame
 void ABuptMagicProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	LoopedAudioComp->SetWorldLocation(GetActorLocation());
 }
 
