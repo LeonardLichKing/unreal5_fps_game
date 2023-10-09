@@ -19,6 +19,11 @@ bool UBuptAttributeComponent::ApplyHealthChange(float Delta)
 	return true;
 }
 
+bool UBuptAttributeComponent::IsAlive() const
+{
+	return Health>0.0f;
+}
+
 
 
 
