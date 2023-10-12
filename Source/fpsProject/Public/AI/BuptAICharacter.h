@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "BuptAICharacter.generated.h"
 
+class UPawnSensingComponent;
+
 UCLASS()
 class FPSPROJECT_API ABuptAICharacter : public ACharacter
 {
@@ -16,11 +18,13 @@ public:
 	ABuptAICharacter();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
+	
+	UPROPERTY(VisibleAnywhere,Category="Components")
+	UPawnSensingComponent* PawnSensingComp;
+
+	UFUNCTION()
+	void OnPawnSeen(APawn* Pawn);
 
 };
