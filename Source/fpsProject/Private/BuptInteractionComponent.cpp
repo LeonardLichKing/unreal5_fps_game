@@ -4,6 +4,7 @@
 #include "BuptInteractionComponent.h"
 #include "BuptGamePlayInterface.h"
 #include "DrawDebugHelpers.h"
+#include "Camera/CameraComponent.h"
 
 
 // Sets default values for this component's properties
@@ -42,12 +43,18 @@ void UBuptInteractionComponent::PrimaryInteract()
 
 	AActor* MyOwner = GetOwner();
 
-	FVector EyeLocation;
-	FRotator EyeRotation;
-	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
-
-	FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
-
+	// FVector EyeLocation;
+	// FRotator EyeRotation;
+	// MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	//
+	// FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	UCameraComponent* CameraComp=Cast<UCameraComponent>(MyOwner->GetComponentByClass(UCameraComponent::StaticClass()));
+	CameraLocation=CameraComp->GetComponentLocation();
+	CameraRotation=CameraComp->GetComponentRotation();
+	FVector End=CameraLocation+(CameraRotation.Vector()*300);
+	
 
 	//FHitResult Hit;
 	//bool bBlockingHit=GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
@@ -59,7 +66,8 @@ void UBuptInteractionComponent::PrimaryInteract()
 	FCollisionShape Shape;
 	Shape.SetSphere(Radius);
 
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	//bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, CameraLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
 	
 	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 
@@ -82,5 +90,6 @@ void UBuptInteractionComponent::PrimaryInteract()
 
 	
 	
-	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
+	// DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), CameraLocation, End, LineColor, false, 2.0f, 0, 2.0f);
 }
