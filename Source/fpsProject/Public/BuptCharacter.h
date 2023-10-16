@@ -18,6 +18,10 @@ class FPSPROJECT_API ABuptCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor,UBuptAttributeComponent* OwningComp,float NewHealth,float Delta);
+
+	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
 	TSubclassOf<AActor>ProjectileClass;

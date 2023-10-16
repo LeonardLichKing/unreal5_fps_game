@@ -31,6 +31,7 @@ ABuptMagicProjectile::ABuptMagicProjectile()
 
 	LoopedAudioComp=CreateDefaultSubobject<UAudioComponent>("LoopedAudioComp");
 	ImpactAudioComp=CreateDefaultSubobject<UAudioComponent>("ImpactAudioComp");
+	
 	//it seems like the audio will autoplay when AudioComponent construct.
 }
 
@@ -47,6 +48,8 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 		{
 			AttributeComp->ApplyHealthChange(-20.0f);
 			Destroy();
+			APlayerController* PCController=GetWorld()->GetFirstPlayerController();
+			PCController->ClientStartCameraShake(CameraShakeComp);
 		}
 	}
 }
@@ -56,6 +59,7 @@ void ABuptMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	LoopedAudioComp->Play();
+	
 }
 
 // Called every frame

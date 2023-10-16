@@ -182,6 +182,22 @@ void ABuptCharacter::PrimaryInteract()
 	}
 }
 
+void ABuptCharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeComponent* OwningComp, float NewHealth,
+	float Delta)
+{
+	if(NewHealth<=0&&Delta<=0)
+	{
+		APlayerController* PC=Cast<APlayerController>(GetController());
+		DisableInput(PC);
+	}
+}
+
+void ABuptCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComp->OnHealthChanged.AddDynamic(this,&ABuptCharacter::OnHealthChanged);
+}
+
 // Called every frame
 void ABuptCharacter::Tick(float DeltaTime)
 {

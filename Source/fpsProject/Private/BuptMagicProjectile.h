@@ -10,7 +10,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 class UActorChannel;
-
+class UCameraShakeBase;
 
 UCLASS()
 class ABuptMagicProjectile : public AActor
@@ -43,6 +43,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	UParticleSystem* ImpactVFX;
+
+	UPROPERTY(EditDefaultsOnly,Category="Effects")
+	TSubclassOf<UCameraShakeBase> CameraShakeComp;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
