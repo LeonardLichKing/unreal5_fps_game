@@ -7,6 +7,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "BuptAttributeComponent.h"
 #include "Components/AudioComponent.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GamePlayStatics.h"
 
 // Sets default values
@@ -45,7 +46,6 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 		if (AttributeComp)
 		{
 			AttributeComp->ApplyHealthChange(-20.0f);
-
 			Destroy();
 		}
 	}
