@@ -53,7 +53,7 @@ void UBuptInteractionComponent::PrimaryInteract()
 	UCameraComponent* CameraComp=Cast<UCameraComponent>(MyOwner->GetComponentByClass(UCameraComponent::StaticClass()));
 	CameraLocation=CameraComp->GetComponentLocation();
 	CameraRotation=CameraComp->GetComponentRotation();
-	FVector End=CameraLocation+(CameraRotation.Vector()*300);
+	FVector End=CameraLocation+(CameraRotation.Vector()*500);
 	
 
 	//FHitResult Hit;
