@@ -30,6 +30,16 @@ bool UBuptAttributeComponent::IsInjured() const
 	return Health<HealthMax;
 }
 
+float UBuptAttributeComponent::GetHealth() const
+{
+	return Health;
+}
+
+float UBuptAttributeComponent::GetMaxHealth() const
+{
+	return HealthMax;
+}
+
 
 
 

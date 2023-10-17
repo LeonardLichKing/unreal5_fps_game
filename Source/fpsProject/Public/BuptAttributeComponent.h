@@ -32,12 +32,18 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
-	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	bool ApplyHealthChange(float Delta);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	bool IsAlive() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	bool IsInjured() const;
+
+	UFUNCTION(BlueprintCallable,Category = "Attributes")
+	float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable,Category = "Attributes")
+	float GetMaxHealth() const;
 };

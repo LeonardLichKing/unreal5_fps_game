@@ -7,6 +7,7 @@
 #include "BuptAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class UBuptAttributeComponent;
 
 UCLASS()
 class FPSPROJECT_API ABuptAICharacter : public ACharacter
@@ -23,6 +24,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere,Category="Components")
 	UPawnSensingComponent* PawnSensingComp;
+
+	UPROPERTY(VisibleAnywhere,Category="Components")
+	UBuptAttributeComponent* AttributeComp;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);

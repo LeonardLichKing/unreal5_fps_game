@@ -4,6 +4,7 @@
 #include "AI/BuptAICharacter.h"
 
 #include "AIController.h"
+#include "BuptAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -11,7 +12,7 @@
 ABuptAICharacter::ABuptAICharacter()
 {
 	PawnSensingComp=CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
-	
+	AttributeComp=CreateDefaultSubobject<UBuptAttributeComponent>("AttributeComp");
 }
 
 void ABuptAICharacter::PostInitializeComponents()
