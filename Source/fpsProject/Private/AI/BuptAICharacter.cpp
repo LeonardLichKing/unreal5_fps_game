@@ -13,6 +13,8 @@ ABuptAICharacter::ABuptAICharacter()
 {
 	PawnSensingComp=CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 	AttributeComp=CreateDefaultSubobject<UBuptAttributeComponent>("AttributeComp");
+
+	AutoPossessAI=EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ABuptAICharacter::PostInitializeComponents()

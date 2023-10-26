@@ -8,6 +8,8 @@
 #include "BuptGameModeBase.generated.h"
 
 class UEnvQuery;
+class UEnvQueryInstanceBlueprintWrapper;
+class UCurveFloat;
 /**
  * 
  */
@@ -19,6 +21,12 @@ protected:
 	FTimerHandle TimerHandle_SpawnBots;
 
 	UPROPERTY(EditDefaultsOnly,Category="AI")
+	UCurveFloat* DifficultyCurve;
+	
+	UPROPERTY(EditDefaultsOnly,Category="AI")
+	TSubclassOf<AActor> MinionClass;
+	
+	UPROPERTY(EditDefaultsOnly,Category="AI")
 	UEnvQuery* SpawnBotQuery;
 	
 	UPROPERTY(EditDefaultsOnly,Category="AI")
@@ -26,7 +34,8 @@ protected:
 
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-	
+
+	UFUNCTION()
 	void SpawnBotTimerElapsed();
 public:
 	ABuptGameModeBase();

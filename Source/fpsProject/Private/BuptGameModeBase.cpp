@@ -3,6 +3,10 @@
 
 #include "BuptGameModeBase.h"
 
+#include "BuptAttributeComponent.h"
+#include "EngineUtils.h"
+#include "SAdvancedRotationInputBox.h"
+#include "AI/BuptAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
 ABuptGameModeBase::ABuptGameModeBase()
@@ -31,8 +35,40 @@ void ABuptGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* Quer
 {
 	if(QueryStatus!=EEnvQueryStatus::Success)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("Spawn bot EQS Query Failed"));
+		return;
+	}
+
+	int32 NrOfAliveBots=0;
+	for(TActorIterator<ABuptAICharacter> It(GetWorld());It;++It)
+	{
+		ABuptAICharacter* Bot=*It;
+		UBuptAttributeComponent* AttributeComp=Cast<UBuptAttributeComponent>(Bot->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
+		if(AttributeComp&&AttributeComp->IsAlive())
+		{
+			NrOfAliveBots++;
+		}
+	}
+
+	float MaxBotCount=10.0f;
+
+	if(DifficultyCurve)
+	{
+		MaxBotCount=DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
+	}
+
+	
+	if(NrOfAliveBots>=MaxBotCount)
+	{
 		return;
 	}
 	
 	TArray<FVector> Locations=QueryInstance->GetResultsAsLocations();
+
+	if(Locations.IsValidIndex(0))
+	{
+		FActorSpawnParameters Params;
+		Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		GetWorld()->SpawnActor<AActor>(MinionClass,Locations[0],FRotator::ZeroRotator,Params);
+	}
 }
