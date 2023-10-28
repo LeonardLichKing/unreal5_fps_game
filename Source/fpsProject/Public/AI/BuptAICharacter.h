@@ -19,7 +19,10 @@ public:
 	ABuptAICharacter();
 
 protected:
-
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor,UBuptAttributeComponent* OwningComp,float NewHealth,float Delta);
+	
 	virtual void PostInitializeComponents() override;
 	
 	UPROPERTY(VisibleAnywhere,Category="Components")

@@ -46,7 +46,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,Category="Effects")
 	TSubclassOf<UCameraShakeBase> CameraShakeComp;
-	
+
+	UPROPERTY(EditDefaultsOnly,Category="Effects")
+	float Damage;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
