@@ -22,6 +22,8 @@ protected:
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor,UBuptAttributeComponent* OwningComp,float NewHealth,float Delta);
+
+	void SetTargetActor(AActor* NewTarget);
 	
 	virtual void PostInitializeComponents() override;
 	

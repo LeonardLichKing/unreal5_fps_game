@@ -47,7 +47,7 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 		UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(Damage);
+			AttributeComp->ApplyHealthChange(GetInstigator(),Damage);
 			Destroy();
 			APlayerController* PCController=GetWorld()->GetFirstPlayerController();
 			PCController->ClientStartCameraShake(CameraShakeComp);

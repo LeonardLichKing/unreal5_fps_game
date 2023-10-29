@@ -24,7 +24,7 @@ void ABuptHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	UBuptAttributeComponent* AttributeComp=Cast<UBuptAttributeComponent>(InstigatorPawn->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
 	if(ensure(AttributeComp)&&AttributeComp->IsInjured())
 	{
-		bool IsApplyHeal=AttributeComp->ApplyHealthChange(HealAmount);
+		bool IsApplyHeal=AttributeComp->ApplyHealthChange(this,HealAmount);
 		if(IsApplyHeal)
 		{
 			HideAndCooldownPowerup();

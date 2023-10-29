@@ -17,6 +17,12 @@ class FPSPROJECT_API UBuptAttributeComponent : public UActorComponent
 
 public:	
 	// Sets default values for this component's properties
+	UFUNCTION(BlueprintCallable,Category="Attributes")
+	static UBuptAttributeComponent* GetAttributes(AActor* FromActor);
+
+	UFUNCTION(BlueprintCallable,Category="Atttributes",meta=(DispalayName="IsAlive"))
+	static bool IsActorAlive(AActor* Actor);
+	
 	UBuptAttributeComponent();
 
 protected:
@@ -33,7 +39,7 @@ public:
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable,Category = "Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor,float Delta);
 
 	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	bool IsAlive() const;

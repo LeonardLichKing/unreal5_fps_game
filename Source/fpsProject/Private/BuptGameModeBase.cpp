@@ -27,7 +27,7 @@ void ABuptGameModeBase::SpawnBotTimerElapsed()
 	for(TActorIterator<ABuptAICharacter> It(GetWorld());It;++It)
 	{
 		ABuptAICharacter* Bot=*It;
-		UBuptAttributeComponent* AttributeComp=Cast<UBuptAttributeComponent>(Bot->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
+		UBuptAttributeComponent* AttributeComp=UBuptAttributeComponent::GetAttributes(Bot);
 		if(AttributeComp&&AttributeComp->IsAlive())
 		{
 			NrOfAliveBots++;

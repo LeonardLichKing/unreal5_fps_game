@@ -3,6 +3,7 @@
 
 #include "BuptAttributeComponent.h"
 
+
 // Sets default values for this component's properties
 UBuptAttributeComponent::UBuptAttributeComponent()
 {
@@ -11,7 +12,7 @@ UBuptAttributeComponent::UBuptAttributeComponent()
 }
 
 
-bool UBuptAttributeComponent::ApplyHealthChange(float Delta)
+bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float Delta)
 {
 	float OldHealth=Health;
 	
@@ -19,7 +20,7 @@ bool UBuptAttributeComponent::ApplyHealthChange(float Delta)
 
 	float ActualDelta=Health-OldHealth;
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
+	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 
 	return true;
 }
@@ -44,6 +45,24 @@ float UBuptAttributeComponent::GetMaxHealth() const
 	return HealthMax;
 }
 
+UBuptAttributeComponent* UBuptAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if(FromActor)
+	{
+		return Cast<UBuptAttributeComponent>(FromActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
+	}
+	return nullptr;
+}
 
+bool UBuptAttributeComponent::IsActorAlive(AActor* Actor)
+{
+	UBuptAttributeComponent* AttributeComp=GetAttributes(Actor);
+	if(AttributeComp)
+	{
+		return AttributeComp->IsAlive();
+	}
+
+	return false;
+}
 
 

@@ -16,7 +16,7 @@ EBTNodeResult::Type UBuptBTTask_HealHealth::ExecuteTask(UBehaviorTreeComponent& 
 		if(ensure(AIPawn))
 		{
 			UBuptAttributeComponent* AttributeComp=AIPawn->FindComponentByClass<UBuptAttributeComponent>();
-			AttributeComp->ApplyHealthChange(AttributeComp->GetMaxHealth());
+			AttributeComp->ApplyHealthChange(AIPawn,AttributeComp->GetMaxHealth());
 			return AttributeComp->IsInjured()?EBTNodeResult::Failed:EBTNodeResult::Succeeded;
 		}
 	}
