@@ -4,8 +4,14 @@
 #include "..\..\Public\AI\BuptBTTask_RangedAttack.h"
 
 #include "AIController.h"
+#include "BuptAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
+
+UBuptBTTaskNode::UBuptBTTaskNode()
+{
+	MaxBulletSpread=2.0f;
+}
 
 EBTNodeResult::Type UBuptBTTaskNode::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -26,9 +32,17 @@ EBTNodeResult::Type UBuptBTTaskNode::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 			return EBTNodeResult::Failed;
 		}
 
+		if(!UBuptAttributeComponent::IsActorAlive(TargetActor))
+		{
+			return EBTNodeResult::Failed;
+		}
+
 		FVector Direction=TargetActor->GetActorLocation()-MuzzleLocation;
 		FRotator MuzzleRotation=Direction.Rotation();
 
+		MuzzleRotation.Pitch+=FMath::RandRange(0.0f,MaxBulletSpread);
+		MuzzleRotation.Yaw+=FMath::RandRange(-MaxBulletSpread,MaxBulletSpread);
+		
 		FActorSpawnParameters Params;
 		Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		Params.Instigator = MyPawn;
@@ -39,4 +53,5 @@ EBTNodeResult::Type UBuptBTTaskNode::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
 	return EBTNodeResult::Failed;
 }
+
 
