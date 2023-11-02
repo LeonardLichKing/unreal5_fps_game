@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BuptAICharacter.generated.h"
 
+class UBuptWorldUserWidget;
 class UPawnSensingComponent;
 class UBuptAttributeComponent;
 
@@ -19,6 +20,11 @@ public:
 	ABuptAICharacter();
 
 protected:
+
+	UBuptWorldUserWidget* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly,Category="UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor,UBuptAttributeComponent* OwningComp,float NewHealth,float Delta);

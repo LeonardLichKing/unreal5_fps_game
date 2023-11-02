@@ -8,9 +8,6 @@
 // Sets default values
 ABuptItemChest::ABuptItemChest()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>("BaseMesh");
 	RootComponent = BaseMesh;
 
@@ -25,17 +22,5 @@ void ABuptItemChest::Interact_Implementation(APawn* InstigatorPawn)
 	LidMesh->SetRelativeRotation(FRotator(TargetPitch, 0, 0));
 }
 
-// Called when the game starts or when spawned
-void ABuptItemChest::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
 
-// Called every frame
-void ABuptItemChest::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 

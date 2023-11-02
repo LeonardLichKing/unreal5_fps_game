@@ -6,7 +6,9 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "BuptAttributeComponent.h"
+#include "BuptWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -45,6 +47,16 @@ void ABuptAICharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeCo
 			SetTargetActor(InstigatorActor);
 		}
 
+		if(ActiveHealthBar==nullptr)
+		{
+			ActiveHealthBar=CreateWidget<UBuptWorldUserWidget>(GetWorld(),HealthBarWidgetClass);
+		
+			if(ActiveHealthBar)
+			{
+				ActiveHealthBar->AttachedActor=this;
+				ActiveHealthBar->AddToViewport();
+			}
+		}
 		
 		if(NewHealth<=0.0f)
 		{
