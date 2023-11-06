@@ -44,6 +44,9 @@ public:
 	// Sets default values for this character's properties
 	ABuptCharacter();
 
+	UFUNCTION(Exec)
+	void HealSelf(float Amount=100);
+	
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;

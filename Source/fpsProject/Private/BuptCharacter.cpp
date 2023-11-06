@@ -33,6 +33,11 @@ ABuptCharacter::ABuptCharacter()
 	bUseControllerRotationYaw = false;//仅仅旋转控制器视角的时候角色不跟着旋转，而是保持朝向
 }
 
+void ABuptCharacter::HealSelf(float Amount /*+100*/)
+{
+	AttributeComp->ApplyHealthChange(this,Amount);
+}
+
 // Called when the game starts or when spawned
 void ABuptCharacter::BeginPlay()
 {

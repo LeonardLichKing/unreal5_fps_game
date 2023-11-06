@@ -12,8 +12,18 @@ UBuptAttributeComponent::UBuptAttributeComponent()
 }
 
 
+bool UBuptAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	return ApplyHealthChange(InstigatorActor,-GetMaxHealth());
+}
+
 bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float Delta)
 {
+	if(!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+	
 	float OldHealth=Health;
 	
 	Health=FMath::Clamp(Health+Delta,0,HealthMax);

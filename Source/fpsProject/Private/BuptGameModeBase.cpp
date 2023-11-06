@@ -21,6 +21,19 @@ void ABuptGameModeBase::StartPlay()
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots,this,&ABuptGameModeBase::SpawnBotTimerElapsed,SpawnTimerInterval,true);
 }
 
+void ABuptGameModeBase::KillAll()
+{
+	for(TActorIterator<ABuptAICharacter> It(GetWorld());It;++It)
+	{
+		ABuptAICharacter* Bot=*It;
+		UBuptAttributeComponent* AttributeComp=UBuptAttributeComponent::GetAttributes(Bot);
+		if(AttributeComp&&AttributeComp->IsAlive())
+		{
+			AttributeComp->Kill(this);//TODO:maybe switch "this" to Player for kill credits is better
+		}
+	}
+}
+
 void ABuptGameModeBase::SpawnBotTimerElapsed()
 {
 	int32 NrOfAliveBots=0;
