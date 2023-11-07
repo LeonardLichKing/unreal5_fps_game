@@ -3,6 +3,8 @@
 
 #include "BuptAttributeComponent.h"
 
+#include "BuptGameModeBase.h"
+
 
 // Sets default values for this component's properties
 UBuptAttributeComponent::UBuptAttributeComponent()
@@ -31,6 +33,16 @@ bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float De
 	float ActualDelta=Health-OldHealth;
 
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+
+	//The AttributeComp's Owner Died
+	if(ActualDelta<0.0f&&Health==0.0f)
+	{
+		ABuptGameModeBase* GM=GetWorld()->GetAuthGameMode<ABuptGameModeBase>();
+		if(GM)
+		{
+			GM->OnActorKilled(GetOwner(),InstigatorActor);
+		}
+	}
 
 	return true;
 }

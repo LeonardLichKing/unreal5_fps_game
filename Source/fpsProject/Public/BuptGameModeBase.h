@@ -37,11 +37,18 @@ protected:
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
+
+	UFUNCTION()
+	void RespawnPlayerElapsed(AController* Controller);
+	
 public:
 	ABuptGameModeBase();
+	
+	virtual void OnActorKilled(AActor* VictimActor,AActor* Killer);
 	
 	virtual void StartPlay() override;
 
 	UFUNCTION(Exec)
 	void KillAll();
 };
+

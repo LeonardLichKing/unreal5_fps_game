@@ -4,6 +4,7 @@
 #include "BuptGameModeBase.h"
 
 #include "BuptAttributeComponent.h"
+#include "BuptCharacter.h"
 #include "EngineUtils.h"
 #include "SAdvancedRotationInputBox.h"
 #include "AI/BuptAICharacter.h"
@@ -12,6 +13,32 @@
 ABuptGameModeBase::ABuptGameModeBase()
 {
 	SpawnTimerInterval=2.0f;
+}
+
+void ABuptGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if(ensure(Controller))
+	{
+		Controller->UnPossess();
+
+		RestartPlayer(Controller);
+	}
+}
+
+void ABuptGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	ABuptCharacter* Player=Cast<ABuptCharacter>(VictimActor);
+	if(Player)
+	{
+		FTimerHandle TimerHandle_RespawnDelay;
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this,"RespawnPlayerElapsed",Player->GetController());
+
+		float RespawnDelay=2.0f;
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay,Delegate,RespawnDelay,false);
+	}
+
+	UE_LOG(LogTemp,Log,TEXT("OnActorKilled: VictimActor: %s,Killer: %s"),*GetNameSafe(VictimActor),*GetNameSafe(Killer));
 }
 
 void ABuptGameModeBase::StartPlay()
