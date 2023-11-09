@@ -44,8 +44,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	UParticleSystem* ImpactVFX;
 
-	UPROPERTY(EditDefaultsOnly,Category="Effects")
-	TSubclassOf<UCameraShakeBase> CameraShakeComp;
+	// UPROPERTY(EditDefaultsOnly,Category="Effects")
+	// TSubclassOf<UCameraShakeBase> CameraShakeComp;
 
 	UPROPERTY(EditDefaultsOnly,Category="Effects")
 	float Damage;

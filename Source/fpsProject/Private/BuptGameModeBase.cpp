@@ -10,6 +10,8 @@
 #include "AI/BuptAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"),true,TEXT("Enable spawning of bots via timer"),ECVF_Cheat);
+
 ABuptGameModeBase::ABuptGameModeBase()
 {
 	SpawnTimerInterval=2.0f;
@@ -63,6 +65,12 @@ void ABuptGameModeBase::KillAll()
 
 void ABuptGameModeBase::SpawnBotTimerElapsed()
 {
+	if(!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Bot spawning disabled via cvar 'CVarSpawnBots'."));
+		return;
+	}
+	
 	int32 NrOfAliveBots=0;
 	for(TActorIterator<ABuptAICharacter> It(GetWorld());It;++It)
 	{

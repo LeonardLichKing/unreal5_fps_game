@@ -5,6 +5,7 @@
 
 #include "BuptGameModeBase.h"
 
+static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"),1.0f,TEXT("Global Damage Modifier for Attribute Component."),ECVF_Cheat);
 
 // Sets default values for this component's properties
 UBuptAttributeComponent::UBuptAttributeComponent()
@@ -21,9 +22,16 @@ bool UBuptAttributeComponent::Kill(AActor* InstigatorActor)
 
 bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float Delta)
 {
-	if(!GetOwner()->CanBeDamaged())
+	if(!GetOwner()->CanBeDamaged()&&Delta<0)
 	{
 		return false;
+	}
+
+	if(Delta<0.0f)
+	{
+		float DamageMultiplier=CVarDamageMultiplier.GetValueOnGameThread();
+
+		Delta*=DamageMultiplier;
 	}
 	
 	float OldHealth=Health;

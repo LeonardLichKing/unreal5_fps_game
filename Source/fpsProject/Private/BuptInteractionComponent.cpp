@@ -6,54 +6,35 @@
 #include "DrawDebugHelpers.h"
 #include "Camera/CameraComponent.h"
 
+static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("su.InteractionDebugDraw"),false,TEXT("Enable Debug Lines for Interact Component."),ECVF_Cheat);
 
 // Sets default values for this component's properties
 UBuptInteractionComponent::UBuptInteractionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-}
-
-
-// Called when the game starts
-void UBuptInteractionComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
 	
 }
 
 
-// Called every frame
-void UBuptInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void UBuptInteractionComponent::PrimaryInteract()
 {
+	bool bDebugDraw=CVarDebugDrawInteraction.GetValueOnGameThread();
+	
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 
 	AActor* MyOwner = GetOwner();
 
-	// FVector EyeLocation;
-	// FRotator EyeRotation;
-	// MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
-	//
-	// FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
-	FVector CameraLocation;
-	FRotator CameraRotation;
-	UCameraComponent* CameraComp=Cast<UCameraComponent>(MyOwner->GetComponentByClass(UCameraComponent::StaticClass()));
-	CameraLocation=CameraComp->GetComponentLocation();
-	CameraRotation=CameraComp->GetComponentRotation();
-	FVector End=CameraLocation+(CameraRotation.Vector()*500);
+	FVector EyeLocation;
+	FRotator EyeRotation;
+	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	
+	FVector End = EyeLocation + (EyeRotation.Vector() * 1000);
+	// FVector CameraLocation;
+	// FRotator CameraRotation;
+	// UCameraComponent* CameraComp=Cast<UCameraComponent>(MyOwner->GetComponentByClass(UCameraComponent::StaticClass()));
+	// CameraLocation=CameraComp->GetComponentLocation();
+	// CameraRotation=CameraComp->GetComponentRotation();
+	// FVector End=CameraLocation+(CameraRotation.Vector()*500);
 	
 
 	//FHitResult Hit;
@@ -67,7 +48,7 @@ void UBuptInteractionComponent::PrimaryInteract()
 	Shape.SetSphere(Radius);
 
 	//bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, CameraLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
 	
 	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 
@@ -76,7 +57,10 @@ void UBuptInteractionComponent::PrimaryInteract()
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor)
 		{
-			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColor, false, 2.0f);
+			if(bDebugDraw)
+			{
+				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColor, false, 2.0f);
+			}
 			
 			if (HitActor->Implements<UBuptGamePlayInterface>())
 			{
@@ -91,5 +75,8 @@ void UBuptInteractionComponent::PrimaryInteract()
 	
 	
 	// DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
-	DrawDebugLine(GetWorld(), CameraLocation, End, LineColor, false, 2.0f, 0, 2.0f);
+	if(bDebugDraw)
+	{
+		DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
+	}
 }

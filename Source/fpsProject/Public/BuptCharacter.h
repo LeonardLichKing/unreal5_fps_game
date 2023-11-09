@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
 	TSubclassOf<AActor>ProjectileClassDash;
 
+	UPROPERTY(EditDefaultsOnly,Category="Attack")
+	TSubclassOf<UCameraShakeBase> CameraShakeComp;
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
@@ -83,6 +86,8 @@ protected:
 	void Jump();
 
 	void PrimaryInteract();
+
+	virtual FVector GetPawnViewLocation() const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

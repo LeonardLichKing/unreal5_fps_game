@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "BuptAttributeComponent.h"
+#include "BuptGameplayFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GamePlayStatics.h"
@@ -44,13 +45,17 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(),ImpactAudioComp->GetSound(),GetActorLocation(),GetActorRotation());
 		
-		UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
-		if (AttributeComp)
+		// UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
+		// if (AttributeComp)
+		// {
+		// 	AttributeComp->ApplyHealthChange(GetInstigator(),Damage);
+		// 	Destroy();
+		// 	// APlayerController* PCController=GetWorld()->GetFirstPlayerController();
+		// 	// PCController->ClientStartCameraShake(CameraShakeComp);
+		// }
+		if(UBuptGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(),OtherActor,Damage,SweepResult))
 		{
-			AttributeComp->ApplyHealthChange(GetInstigator(),Damage);
 			Destroy();
-			APlayerController* PCController=GetWorld()->GetFirstPlayerController();
-			PCController->ClientStartCameraShake(CameraShakeComp);
 		}
 	}
 }

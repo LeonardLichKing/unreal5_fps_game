@@ -9,6 +9,7 @@
 #include "BuptAttributeComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/GameSession.h"
 
 
 // Sets default values
@@ -187,9 +188,19 @@ void ABuptCharacter::PrimaryInteract()
 	}
 }
 
-void ABuptCharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeComponent* OwningComp, float NewHealth,
-	float Delta)
+FVector ABuptCharacter::GetPawnViewLocation() const
 {
+	return CameraComp->GetComponentLocation();	
+}
+
+void ABuptCharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeComponent* OwningComp, float NewHealth,
+                                     float Delta)
+{
+	if(Delta<0&&NewHealth>0)
+	{
+		APlayerController* PCController=GetWorld()->GetFirstPlayerController();//TODO:should take care of multi-player
+		PCController->ClientStartCameraShake(CameraShakeComp);
+	}
 	if(NewHealth<=0&&Delta<=0)
 	{
 		APlayerController* PC=Cast<APlayerController>(GetController());
