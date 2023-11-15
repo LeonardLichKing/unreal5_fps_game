@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BuptCharacter.generated.h"
 
+class UBuptActionrComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UBuptInteractionComponent;
@@ -62,12 +63,19 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UBuptAttributeComponent* AttributeComp;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components")
+	UBuptActionrComponent* ActionComp;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
 
 	void MoveRight(float value);
+
+	void SprintStart();
+
+	void SprintStop();
 
 	void SpawnProjectile(TSubclassOf<AActor>ClassToSpawn);
 

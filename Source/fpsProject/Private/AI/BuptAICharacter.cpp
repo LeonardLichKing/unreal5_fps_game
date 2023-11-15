@@ -35,6 +35,7 @@ void ABuptAICharacter::PostInitializeComponents()
 
 void ABuptAICharacter::SetTargetActor(AActor* NewTarget)
 {
+	//TODO:it's necessary to ignore the teammate AIs
 	AAIController* AIC=Cast<AAIController>(GetController());
 	if(AIC)
 	{

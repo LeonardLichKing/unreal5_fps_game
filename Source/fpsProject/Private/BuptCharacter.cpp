@@ -2,6 +2,8 @@
 
 
 #include "BuptCharacter.h"
+
+#include "BuptActionrComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -29,6 +31,8 @@ ABuptCharacter::ABuptCharacter()
 
 	AttributeComp=CreateDefaultSubobject<UBuptAttributeComponent>("AttributeComp");
 
+	ActionComp=CreateDefaultSubobject<UBuptActionrComponent>("ActionComp");
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;//让charactor自动转向控制移动的方向
 
 	bUseControllerRotationYaw = false;//仅仅旋转控制器视角的时候角色不跟着旋转，而是保持朝向
@@ -71,6 +75,16 @@ void ABuptCharacter::MoveRight(float value)
 	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
 
 	AddMovementInput(RightVector, value);
+}
+
+void ABuptCharacter::SprintStart()
+{
+	ActionComp->StartActionByName(this,"Sprint");
+}
+
+void ABuptCharacter::SprintStop()
+{
+	ActionComp->StopActionByName(this,"Sprint");
 }
 
 void ABuptCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
@@ -238,5 +252,8 @@ void ABuptCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ABuptCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("BlackHole", IE_Pressed, this, &ABuptCharacter::BlackHole);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABuptCharacter::Dash);
+
+	PlayerInputComponent->BindAction("Sprint",IE_Pressed,this,&ABuptCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint",IE_Released,this,&ABuptCharacter::SprintStop);
 }
 
