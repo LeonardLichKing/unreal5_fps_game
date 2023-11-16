@@ -23,27 +23,10 @@ protected:
 	void OnHealthChanged(AActor* InstigatorActor,UBuptAttributeComponent* OwningComp,float NewHealth,float Delta);
 
 	virtual void PostInitializeComponents() override;
-
-	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
-	TSubclassOf<AActor>ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
-	TSubclassOf<AActor>ProjectileClassBlackHole;
-
-	UPROPERTY(EditAnywhere, Category = "Attack");//使得可以在ue编辑器中进行设置和编辑
-	TSubclassOf<AActor>ProjectileClassDash;
-
+	
 	UPROPERTY(EditDefaultsOnly,Category="Attack")
 	TSubclassOf<UCameraShakeBase> CameraShakeComp;
 
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
-	FTimerHandle TimerHandle_PrimaryAttack;
-
-	FTimerHandle TimerHandle_BlackHole;
-
-	FTimerHandle TimerHandle_Dash;
 public:
 	// Sets default values for this character's properties
 	ABuptCharacter();
@@ -66,8 +49,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Components")
 	UBuptActionrComponent* ActionComp;
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
 
@@ -77,19 +58,11 @@ protected:
 
 	void SprintStop();
 
-	void SpawnProjectile(TSubclassOf<AActor>ClassToSpawn);
-
 	void PrimaryAttack();
-
-	void PrimaryAttack_TimeElapsed();
 
 	void BlackHole();
 
-	void BlackHole_TimeElapsed();
-
 	void Dash();
-
-	void Dash_TimeElapsed();
 
 	void Jump();
 
@@ -97,9 +70,7 @@ protected:
 
 	virtual FVector GetPawnViewLocation() const override;
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

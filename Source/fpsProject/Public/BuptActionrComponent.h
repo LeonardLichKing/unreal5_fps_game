@@ -29,6 +29,9 @@ public:
 
 protected:
 	// Called when the game starts
+	UPROPERTY(EditAnywhere,Category="Actions")
+	TArray<TSubclassOf<UBuptAction>> DefaultActions;
+	
 	UPROPERTY()
 	TArray<UBuptAction*> Actions;
 	

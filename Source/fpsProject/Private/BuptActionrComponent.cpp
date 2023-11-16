@@ -13,6 +13,10 @@ UBuptActionrComponent::UBuptActionrComponent()
 void UBuptActionrComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	for(TSubclassOf<UBuptAction> ActionClass:DefaultActions)
+	{
+		AddAction(ActionClass);
+	}
 }
 
 void UBuptActionrComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
