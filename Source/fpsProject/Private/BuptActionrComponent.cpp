@@ -47,6 +47,13 @@ bool UBuptActionrComponent::StartActionByName(AActor* Instigator, FName ActionNa
 	{
 		if(Action&&Action->ActionName==ActionName)
 		{
+			if(!Action->CanStart(Instigator))
+			{
+				FString FailedMsg=FString::Printf(TEXT("Failed to run: %s"),*ActionName.ToString());
+				GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,FailedMsg);
+				continue;
+			}
+			
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -61,8 +68,11 @@ bool UBuptActionrComponent::StopActionByName(AActor* Instigator, FName ActionNam
 	{
 		if(Action&&Action->ActionName==ActionName)
 		{
-			Action->StopAction(Instigator);
-			return true;
+			if(Action->IsRunning())
+			{
+				Action->StopAction(Instigator);
+				return true;
+			}
 		}
 	}
 

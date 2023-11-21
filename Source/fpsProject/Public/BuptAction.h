@@ -28,8 +28,16 @@ protected:
 	//只有当action标签不在容器中时action才能执行
 	UPROPERTY(EditDefaultsOnly,Category="Tags")
 	FGameplayTagContainer BlockedTags;
+
+	bool bIsRunning;
 	
 public:
+	UFUNCTION(BlueprintCallable,Category="Action")
+	bool IsRunning() const;
+	
+	UFUNCTION(BlueprintNativeEvent,Category="Action")
+	bool CanStart(AActor* Instigator);
+	
 	UFUNCTION(BlueprintNativeEvent,Category="Action")
 	void StartAction(AActor* Instigator);
 
