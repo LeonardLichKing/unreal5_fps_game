@@ -2,6 +2,8 @@
 
 
 #include "BuptProjectileBase.h"
+
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GamePlayStatics.h"
@@ -26,7 +28,12 @@ ABuptProjectileBase::ABuptProjectileBase()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 	MovementComp->ProjectileGravityScale=0.0f;
+
 	
+	LoopedAudioComp=CreateDefaultSubobject<UAudioComponent>("LoopedAudioComp");
+	LoopedAudioComp->SetupAttachment(RootComponent);
+	ImpactAudioComp=CreateDefaultSubobject<UAudioComponent>("ImpactAudioComp");
+	ImpactAudioComp->SetupAttachment(RootComponent);
 }
 
 void ABuptProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
@@ -38,14 +45,17 @@ void ABuptProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* 
 void ABuptProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	SphereComp->OnComponentHit.AddDynamic(this, &ABuptProjectileBase::OnActorHit);
 }
 
 void ABuptProjectileBase::Explode_Implementation()
 {
-	if(!IsPendingKill())
+	if (ensure(IsValid(this)))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(this,ImpactVFX,GetActorLocation(),GetActorRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
 
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactAudioComp->GetSound(), GetActorLocation());
+		
 		Destroy();
 	}
 }

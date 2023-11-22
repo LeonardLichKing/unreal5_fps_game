@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BuptProjectileBase.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "BuptMagicProjectile.generated.h"
 
@@ -13,7 +15,7 @@ class UActorChannel;
 class UCameraShakeBase;
 
 UCLASS()
-class ABuptMagicProjectile : public AActor
+class ABuptMagicProjectile : public ABuptProjectileBase
 {
 	GENERATED_BODY()
 	
@@ -24,36 +26,13 @@ public:
 protected:
 
 	UFUNCTION()
-	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);	
+
+	virtual void PostInitializeComponents() override;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USphereComponent* SphereComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UProjectileMovementComponent* MovementComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UParticleSystemComponent* EffectComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UAudioComponent* LoopedAudioComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UAudioComponent* ImpactAudioComp;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
-	UParticleSystem* ImpactVFX;
-
-	// UPROPERTY(EditDefaultsOnly,Category="Effects")
-	// TSubclassOf<UCameraShakeBase> CameraShakeComp;
-
 	UPROPERTY(EditDefaultsOnly,Category="Effects")
 	float Damage;
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	UPROPERTY(EditDefaultsOnly,Category="Effects")
+	FGameplayTag ParryTag;
 };

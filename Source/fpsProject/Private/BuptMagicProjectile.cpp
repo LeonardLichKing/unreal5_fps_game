@@ -2,6 +2,8 @@
 
 
 #include "BuptMagicProjectile.h"
+
+#include "BuptActionrComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -14,27 +16,17 @@
 // Sets default values
 ABuptMagicProjectile::ABuptMagicProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
-	SphereComp->SetCollisionProfileName("Projectile");
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ABuptMagicProjectile::OnActorOverlap);
-	RootComponent = SphereComp;
-
-	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
-	EffectComp->SetupAttachment(SphereComp);
-
-	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
-	MovementComp->InitialSpeed = 8000.0f;
-	MovementComp->bRotationFollowsVelocity = true;
-	MovementComp->bInitialVelocityInLocalSpace = true;
-
-	LoopedAudioComp=CreateDefaultSubobject<UAudioComponent>("LoopedAudioComp");
-	ImpactAudioComp=CreateDefaultSubobject<UAudioComponent>("ImpactAudioComp");
-
-	Damage=-20.0f;
+	SphereComp->SetSphereRadius(20.0f);
+	InitialLifeSpan = 10.0f;
+	Damage = -20.0f;
 	//it seems like the audio will autoplay when AudioComponent construct.
+}
+
+void ABuptMagicProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ABuptMagicProjectile::OnActorOverlap);
 }
 
 void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -44,7 +36,13 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 		LoopedAudioComp->Stop();
 
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(),ImpactAudioComp->GetSound(),GetActorLocation(),GetActorRotation());
-		
+
+		UBuptActionrComponent* ActionComp=Cast<UBuptActionrComponent>(OtherActor->GetComponentByClass(UBuptActionrComponent::StaticClass()));
+
+		if(ActionComp&&ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			
+		}
 		// UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
 		// if (AttributeComp)
 		// {
@@ -60,18 +58,6 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 	}
 }
 
-// Called when the game starts or when spawned
-void ABuptMagicProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-	LoopedAudioComp->Play();
-	
-}
 
-// Called every frame
-void ABuptMagicProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	LoopedAudioComp->SetWorldLocation(GetActorLocation());
-}
+
 
