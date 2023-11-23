@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "BuptActionrComponent.h"
 #include "BuptAttributeComponent.h"
 #include "BuptWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -18,6 +19,7 @@ ABuptAICharacter::ABuptAICharacter()
 {
 	PawnSensingComp=CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 	AttributeComp=CreateDefaultSubobject<UBuptAttributeComponent>("AttributeComp");
+	ActionComp=CreateDefaultSubobject<UBuptActionrComponent>("ActionComp");
 
 	AutoPossessAI=EAutoPossessAI::PlacedInWorldOrSpawned;
 

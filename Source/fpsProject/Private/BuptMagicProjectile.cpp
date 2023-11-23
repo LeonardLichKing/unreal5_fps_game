@@ -12,6 +12,7 @@
 #include "Components/AudioComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GamePlayStatics.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
 ABuptMagicProjectile::ABuptMagicProjectile()
@@ -41,7 +42,10 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 
 		if(ActionComp&&ActionComp->ActiveGameplayTags.HasTag(ParryTag))
 		{
-			
+			MovementComp->Velocity=-MovementComp->Velocity;
+
+			SetInstigator(Cast<APawn>(OtherActor));
+			return;
 		}
 		// UBuptAttributeComponent* AttributeComp = Cast<UBuptAttributeComponent>(OtherActor->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
 		// if (AttributeComp)

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BuptAICharacter.generated.h"
 
+class UBuptActionrComponent;
 class UBuptWorldUserWidget;
 class UPawnSensingComponent;
 class UBuptAttributeComponent;
@@ -38,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,Category="Components")
 	UBuptAttributeComponent* AttributeComp;
+
+	UPROPERTY(VisibleAnywhere,Category="Components")
+	UBuptActionrComponent* ActionComp;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
