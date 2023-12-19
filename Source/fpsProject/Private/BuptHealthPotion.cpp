@@ -4,6 +4,7 @@
 #include "BuptHealthPotion.h"
 
 #include "BuptAttributeComponent.h"
+#include "BuptPlayerState.h"
 
 ABuptHealthPotion::ABuptHealthPotion()
 {
@@ -12,6 +13,7 @@ ABuptHealthPotion::ABuptHealthPotion()
 	MeshComp->SetupAttachment(RootComponent);
 
 	HealAmount=20.0f;
+	CreditCost=50;
 }
 
 void ABuptHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
@@ -21,13 +23,21 @@ void ABuptHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	{
 		return;
 	}
-	UBuptAttributeComponent* AttributeComp=Cast<UBuptAttributeComponent>(InstigatorPawn->GetComponentByClass(UBuptAttributeComponent::StaticClass()));
+	UBuptAttributeComponent* AttributeComp=UBuptAttributeComponent::GetAttributes(InstigatorPawn);
 	if(ensure(AttributeComp)&&AttributeComp->IsInjured())
 	{
-		bool IsApplyHeal=AttributeComp->ApplyHealthChange(this,HealAmount);
-		if(IsApplyHeal)
+		if(ABuptPlayerState* PS=InstigatorPawn->GetPlayerState<ABuptPlayerState>())
 		{
-			HideAndCooldownPowerup();
+			if(PS->RemoveCredits(CreditCost)&&AttributeComp->ApplyHealthChange(this,HealAmount))
+			{
+				HideAndCooldownPowerup();
+			}
 		}
+		
+		// bool IsApplyHeal=AttributeComp->ApplyHealthChange(this,HealAmount);
+		// if(IsApplyHeal)
+		// {
+		// 	HideAndCooldownPowerup();
+		// }
 	}
 }

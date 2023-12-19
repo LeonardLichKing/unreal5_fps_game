@@ -5,6 +5,7 @@
 
 #include "BuptAttributeComponent.h"
 #include "BuptCharacter.h"
+#include "BuptPlayerState.h"
 #include "EngineUtils.h"
 #include "SAdvancedRotationInputBox.h"
 #include "AI/BuptAICharacter.h"
@@ -15,6 +16,12 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"),true,TEXT("
 ABuptGameModeBase::ABuptGameModeBase()
 {
 	SpawnTimerInterval=2.0f;
+	CreditsPerKill=20;
+
+	DesiredPowerupCount=10;
+	RequiredPowerupDistance=2000;
+
+	PlayerStateClass=ABuptPlayerState::StaticClass();
 }
 
 void ABuptGameModeBase::RespawnPlayerElapsed(AController* Controller)
@@ -29,6 +36,7 @@ void ABuptGameModeBase::RespawnPlayerElapsed(AController* Controller)
 
 void ABuptGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
+	UE_LOG(LogTemp,Log,TEXT("OnActorKilled: VictimActor: %s,Killer: %s"),*GetNameSafe(VictimActor),*GetNameSafe(Killer));
 	ABuptCharacter* Player=Cast<ABuptCharacter>(VictimActor);
 	if(Player)
 	{
@@ -40,7 +48,15 @@ void ABuptGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay,Delegate,RespawnDelay,false);
 	}
 
-	UE_LOG(LogTemp,Log,TEXT("OnActorKilled: VictimActor: %s,Killer: %s"),*GetNameSafe(VictimActor),*GetNameSafe(Killer));
+	APawn* KillerPawn=Cast<APawn>(Killer);
+	if(KillerPawn)
+	{
+		ABuptPlayerState* PS=KillerPawn->GetPlayerState<ABuptPlayerState>();
+		if(PS)
+		{
+			PS->AddCredits(CreditsPerKill);
+		}
+	}
 }
 
 void ABuptGameModeBase::StartPlay()
@@ -98,11 +114,11 @@ void ABuptGameModeBase::SpawnBotTimerElapsed()
 	UEnvQueryInstanceBlueprintWrapper* QueryInstance=UEnvQueryManager::RunEQSQuery(this,SpawnBotQuery,this,EEnvQueryRunMode::RandomBest5Pct,nullptr);
 	if(ensure(QueryInstance))
 	{
-		QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this,&ABuptGameModeBase::OnQueryCompleted);
+		QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this,&ABuptGameModeBase::OnBotSpawnQueryCompleted);
 	}
 }
 
-void ABuptGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
+void ABuptGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
 	EEnvQueryStatus::Type QueryStatus)
 {
 	if(QueryStatus!=EEnvQueryStatus::Success)
