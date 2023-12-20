@@ -52,7 +52,9 @@ protected:
 
 	UFUNCTION()
 	void OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-
+	
+	void OnPowerupSpawnQueryCompleted(TSharedPtr<FEnvQueryResult> Result);
+	
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
 
