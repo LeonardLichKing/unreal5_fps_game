@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "BuptMagicProjectile.generated.h"
 
+class UBuptActionEffect;
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
@@ -29,6 +30,9 @@ protected:
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);	
 
 	virtual void PostInitializeComponents() override;
+
+	UPROPERTY(EditDefaultsOnly,Category="Effects")
+	TSubclassOf<UBuptActionEffect> BurningActionClass;
 	
 	UPROPERTY(EditDefaultsOnly,Category="Effects")
 	float Damage;

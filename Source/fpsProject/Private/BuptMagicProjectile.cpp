@@ -13,6 +13,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GamePlayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "BuptActionEffect.h"
 
 // Sets default values
 ABuptMagicProjectile::ABuptMagicProjectile()
@@ -57,7 +58,12 @@ void ABuptMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedCompone
 		// }
 		if(UBuptGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(),OtherActor,Damage,SweepResult))
 		{
-			Destroy();
+			Explode();
+
+			if(ActionComp)
+			{
+				ActionComp->AddAction(GetInstigator(),BurningActionClass);
+			}
 		}
 	}
 }
