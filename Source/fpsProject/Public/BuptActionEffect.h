@@ -22,9 +22,11 @@ public:
 	
 protected:
 
+	//duration means how many times it will continue
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Effect")
 	float Duration;
 
+	//period means the working frequency
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Effect")
 	float Period;
 
