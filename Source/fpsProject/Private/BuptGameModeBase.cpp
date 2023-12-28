@@ -18,7 +18,7 @@ ABuptGameModeBase::ABuptGameModeBase()
 	SpawnTimerInterval=2.0f;
 	CreditsPerKill=20;
 
-	DesiredPowerupCount=10;
+	DesiredPowerupCount=5;
 	RequiredPowerupDistance=2000;
 
 	PlayerStateClass=ABuptPlayerState::StaticClass();

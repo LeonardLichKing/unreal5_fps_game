@@ -124,6 +124,10 @@ void ABuptCharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeComp
 	{
 		APlayerController* PCController=GetWorld()->GetFirstPlayerController();//TODO:should take care of multi-player
 		PCController->ClientStartCameraShake(CameraShakeComp);
+
+		float RageAmount=FMath::Abs(Delta);
+		AttributeComp->ApplyRage(InstigatorActor,RageAmount);
+		
 	}
 	if(NewHealth<=0&&Delta<=0)
 	{

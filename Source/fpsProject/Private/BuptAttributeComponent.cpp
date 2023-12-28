@@ -12,6 +12,9 @@ UBuptAttributeComponent::UBuptAttributeComponent()
 {
 	HealthMax=100;
 	Health = 100;
+
+	Rage=0;
+	RageMax=100;
 }
 
 
@@ -55,6 +58,21 @@ bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float De
 	return true;
 }
 
+bool UBuptAttributeComponent::ApplyRage(AActor* InstigatorActor, float Delta)
+{
+	float OldRage = Rage;
+
+	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+
+	float ActualDelta = Rage - OldRage;
+	if (ActualDelta != 0.0f)
+	{
+		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+	}
+
+	return ActualDelta != 0;
+}
+
 bool UBuptAttributeComponent::IsAlive() const
 {
 	return Health>0.0f;
@@ -68,6 +86,11 @@ bool UBuptAttributeComponent::IsInjured() const
 float UBuptAttributeComponent::GetHealth() const
 {
 	return Health;
+}
+
+float UBuptAttributeComponent::GetRage() const
+{
+	return Rage;
 }
 
 float UBuptAttributeComponent::GetMaxHealth() const

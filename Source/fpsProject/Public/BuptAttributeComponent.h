@@ -8,7 +8,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, UBuptAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnRageChanged, AActor*, InstigatorActor, UBuptAttributeComponent*, OwningComp, float, NewRage, float, Delta);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FPSPROJECT_API UBuptAttributeComponent : public UActorComponent
@@ -33,6 +33,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Attributes")
 	float Health;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Attributes")
+	float Rage;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Attributes")
+	float RageMax;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -41,8 +47,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
+	UPROPERTY(BlueprintAssignable, Category = "Attributes")
+	FOnRageChanged OnRageChanged;
+	
 	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor,float Delta);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool ApplyRage(AActor* InstigatorActor, float Delta);
 
 	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	bool IsAlive() const;
@@ -52,6 +64,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	float GetHealth() const;
+	
+	UFUNCTION(BlueprintCallable,Category="Attributes")
+	float GetRage() const;
 
 	UFUNCTION(BlueprintCallable,Category = "Attributes")
 	float GetMaxHealth() const;

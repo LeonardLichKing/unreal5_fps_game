@@ -7,6 +7,7 @@
 #include "BuptPlayerState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged,ABuptPlayerState*,PlayerState,int32,NewCredits,int32,Delta);
+
 /**
  * 
  */
@@ -19,6 +20,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category="Credits")
 	int32 Credits;
 
+	UPROPERTY(EditDefaultsOnly,Category="Rage")
+	int32 RageAmount;
+	
 public:
 
 	UFUNCTION(BlueprintCallable,Category="Credits")
@@ -32,4 +36,5 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category="Events")
 	FOnCreditsChanged OnCreditsChanged;
+	
 };
