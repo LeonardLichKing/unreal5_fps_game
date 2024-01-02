@@ -20,6 +20,9 @@ public:
 
 protected:
 
+	UFUNCTION(Server,Reliable)
+	void ServerInteract(AActor* InActor);
+	
 	void FindBestInteractable();
 
 	virtual void BeginPlay() override;
