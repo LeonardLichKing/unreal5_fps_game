@@ -56,6 +56,19 @@ void UBuptActionrComponent::RemoveAction(UBuptAction* ActionToRemove)
 	Actions.Remove(ActionToRemove);
 }
 
+UBuptAction* UBuptActionrComponent::GetAction(TSubclassOf<UBuptAction> ActionClass) const
+{
+	for (UBuptAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionClass))
+		{
+			return Action;
+		}
+	}
+
+	return nullptr;
+}
+
 bool UBuptActionrComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
 	for(UBuptAction* Action:Actions)
