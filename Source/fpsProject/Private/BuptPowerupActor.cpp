@@ -18,7 +18,8 @@ ABuptPowerupActor::ABuptPowerupActor()
 	// MeshComp->SetupAttachment(RootComponent);
 
 	RespawnTime=10.0f;
-	
+
+	SetReplicates(true);
 }
 
 void ABuptPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
