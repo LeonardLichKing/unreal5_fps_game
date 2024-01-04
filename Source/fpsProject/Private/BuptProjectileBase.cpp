@@ -35,7 +35,7 @@ ABuptProjectileBase::ABuptProjectileBase()
 	ImpactAudioComp=CreateDefaultSubobject<UAudioComponent>("ImpactAudioComp");
 	ImpactAudioComp->SetupAttachment(RootComponent);
 
-	SetReplicates(true);
+	// SetReplicates(true);
 }
 
 void ABuptProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,

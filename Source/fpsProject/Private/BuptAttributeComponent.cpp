@@ -4,6 +4,7 @@
 #include "BuptAttributeComponent.h"
 
 #include "BuptGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"),1.0f,TEXT("Global Damage Modifier for Attribute Component."),ECVF_Cheat);
 
@@ -15,8 +16,9 @@ UBuptAttributeComponent::UBuptAttributeComponent()
 
 	Rage=0;
 	RageMax=100;
-}
 
+	SetIsReplicatedByDefault(true);
+}
 
 bool UBuptAttributeComponent::Kill(AActor* InstigatorActor)
 {
@@ -44,6 +46,11 @@ bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float De
 	float ActualDelta=Health-OldHealth;
 
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+
+	if(ActualDelta!=0.0f)
+	{
+		MulticastHealthChanged(InstigatorActor,Health,ActualDelta);
+	}
 
 	//The AttributeComp's Owner Died
 	if(ActualDelta<0.0f&&Health==0.0f)
@@ -118,4 +125,18 @@ bool UBuptAttributeComponent::IsActorAlive(AActor* Actor)
 	return false;
 }
 
+void UBuptAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth,
+	float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor,this,NewHealth,Delta);
+}
+
+void UBuptAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBuptAttributeComponent,Health);
+	DOREPLIFETIME(UBuptAttributeComponent,HealthMax);
+	// DOREPLIFETIME_CONDITION(UBuptAttributeComponent,HealthMax,COND_OwnerOnly);
+}
 
