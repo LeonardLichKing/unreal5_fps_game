@@ -45,8 +45,19 @@ void ABuptAICharacter::SetTargetActor(AActor* NewTarget)
 	}
 }
 
+AActor* ABuptAICharacter::GetTargetActor() const
+{
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if (AIC)
+	{
+		return Cast<AActor>(AIC->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	}
+
+	return nullptr;
+}
+
 void ABuptAICharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeComponent* OwningComp, float NewHealth,
-	float Delta)
+                                       float Delta)
 {
 	if(Delta<0)
 	{
@@ -89,14 +100,17 @@ void ABuptAICharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeCo
 
 void ABuptAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);
-	UBuptWorldUserWidget* NewWidget = CreateWidget<UBuptWorldUserWidget>(GetWorld(), SpottedWidgetClass);
-	if (NewWidget)
+	if(GetTargetActor()!=Pawn)
 	{
-		NewWidget->AttachedActor = this;
-		// Index of 10 (or anything higher than default of 0) places this on top of any other widget.
-		// May end up behind the minion health bar otherwise.
-		NewWidget->AddToViewport(10);
+		SetTargetActor(Pawn);
+		UBuptWorldUserWidget* NewWidget = CreateWidget<UBuptWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+		if (NewWidget)
+		{
+			NewWidget->AttachedActor = this;
+			// Index of 10 (or anything higher than default of 0) places this on top of any other widget.
+			// May end up behind the minion health bar otherwise.
+			NewWidget->AddToViewport(10);
+		}
 	}
-	DrawDebugString(GetWorld(),GetActorLocation(),"PLAYER SPOTTED",nullptr,FColor::White,4.0f,true);
+	//DrawDebugString(GetWorld(),GetActorLocation(),"PLAYER SPOTTED",nullptr,FColor::White,4.0f,true);
 }

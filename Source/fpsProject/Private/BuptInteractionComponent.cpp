@@ -31,6 +31,8 @@ void UBuptInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	APawn* MyPawn=Cast<APawn>(GetOwner());
+
+	//如果是后台服务器同时作为前台作为客户端（聆听），那么是true，如果是纯后台服务器（独立）那么是false。
 	if(MyPawn->IsLocallyControlled())
 	{
 		FindBestInteractable();

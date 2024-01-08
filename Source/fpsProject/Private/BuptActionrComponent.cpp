@@ -8,6 +8,8 @@
 UBuptActionrComponent::UBuptActionrComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	SetIsReplicatedByDefault(true);
 }
 
 void UBuptActionrComponent::BeginPlay()
@@ -81,6 +83,11 @@ bool UBuptActionrComponent::StartActionByName(AActor* Instigator, FName ActionNa
 				GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Red,FailedMsg);
 				continue;
 			}
+
+			if(!GetOwner()->HasAuthority())
+			{
+				ServerStartAction(Instigator,ActionName);
+			}
 			
 			Action->StartAction(Instigator);
 			return true;
@@ -105,4 +112,9 @@ bool UBuptActionrComponent::StopActionByName(AActor* Instigator, FName ActionNam
 	}
 
 	return false;
+}
+
+void UBuptActionrComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartActionByName(Instigator,ActionName);
 }
