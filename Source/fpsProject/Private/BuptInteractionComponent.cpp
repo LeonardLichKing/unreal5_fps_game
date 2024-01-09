@@ -14,6 +14,7 @@ static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("su.InteractionD
 UBuptInteractionComponent::UBuptInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick=true;
+	PrimaryComponentTick.TickGroup = TG_PostUpdateWork;
 
 	TraceDistance=500.0f;
 	TraceRadius=30.0f;
@@ -125,6 +126,8 @@ void UBuptInteractionComponent::ServerInteract_Implementation(AActor* InActor)
 	if(InActor==nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::Red,"No Focus Actor to interact");
+
+		return;
 	}
 	
 	APawn* MyPawn = Cast<APawn>(GetOwner());

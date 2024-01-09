@@ -5,6 +5,7 @@
 
 #include "MovieSceneSequenceID.h"
 #include "Components/SphereComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABuptPowerupActor::ABuptPowerupActor()
@@ -18,13 +19,21 @@ ABuptPowerupActor::ABuptPowerupActor()
 	// MeshComp->SetupAttachment(RootComponent);
 
 	RespawnTime=10.0f;
+	bIsActive = true;
 
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void ABuptPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
 {
 	IBuptGamePlayInterface::Interact_Implementation(InstigatorPawn);
+}
+
+void ABuptPowerupActor::OnRep_IsActive()
+{
+	SetActorEnableCollision(bIsActive);
+	// Set visibility on root and all children
+	RootComponent->SetVisibility(bIsActive, true);
 }
 
 void ABuptPowerupActor::ShowPowerup()
@@ -41,10 +50,14 @@ void ABuptPowerupActor::HideAndCooldownPowerup()
 
 void ABuptPowerupActor::SetPowerupState(bool bIsActivate)
 {
-	SetActorEnableCollision(bIsActivate);
-
-	RootComponent->SetVisibility(bIsActivate,true);
+	bIsActive = bIsActivate;
+	OnRep_IsActive();
 }
 
+void ABuptPowerupActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ABuptPowerupActor, bIsActive);
+}
 

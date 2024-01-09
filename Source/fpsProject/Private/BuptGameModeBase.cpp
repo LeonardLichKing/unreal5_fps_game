@@ -49,7 +49,7 @@ void ABuptGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 	}
 
 	APawn* KillerPawn=Cast<APawn>(Killer);
-	if(KillerPawn)
+	if(KillerPawn&&KillerPawn!=VictimActor)
 	{
 		ABuptPlayerState* PS=KillerPawn->GetPlayerState<ABuptPlayerState>();
 		if(PS)

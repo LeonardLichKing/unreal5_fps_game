@@ -17,11 +17,11 @@ class FPSPROJECT_API ABuptPlayerState : public APlayerState
 	GENERATED_BODY()
 protected:
 
-	UPROPERTY(EditDefaultsOnly,Category="Credits")
+	UPROPERTY(EditDefaultsOnly,ReplicatedUsing="OnRep_Credits",Category="Credits")
 	int32 Credits;
 
-	UPROPERTY(EditDefaultsOnly,Category="Rage")
-	int32 RageAmount;
+	UFUNCTION()
+	void OnRep_Credits(int32 OldCredits);
 	
 public:
 

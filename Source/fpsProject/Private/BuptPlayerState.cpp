@@ -3,6 +3,8 @@
 
 #include "BuptPlayerState.h"
 
+#include "Net/UnrealNetwork.h"
+
 void ABuptPlayerState::AddCredits(int32 Delta)
 {
 	if(!ensure(Delta>0.0f))
@@ -37,4 +39,16 @@ bool ABuptPlayerState::RemoveCredits(int32 Delta)
 int32 ABuptPlayerState::GetCredits() const
 {
 	return Credits;
+}
+
+void ABuptPlayerState::OnRep_Credits(int32 OldCredits)
+{
+	OnCreditsChanged.Broadcast(this, Credits, Credits - OldCredits);
+}
+
+void ABuptPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABuptPlayerState,Credits);
 }

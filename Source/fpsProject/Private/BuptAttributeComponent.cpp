@@ -27,7 +27,7 @@ bool UBuptAttributeComponent::Kill(AActor* InstigatorActor)
 
 bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float Delta)
 {
-	if(!GetOwner()->CanBeDamaged()&&Delta<0)
+	if(!GetOwner()->CanBeDamaged()&&Delta<0.0f)
 	{
 		return false;
 	}
@@ -41,41 +41,54 @@ bool UBuptAttributeComponent::ApplyHealthChange(AActor* InstigatorActor,float De
 	
 	float OldHealth=Health;
 	
-	Health=FMath::Clamp(Health+Delta,0,HealthMax);
+	float NewHealth=FMath::Clamp(Health+Delta,0,HealthMax);
 
-	float ActualDelta=Health-OldHealth;
+	float ActualDelta=NewHealth-OldHealth;
 
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 
-	if(ActualDelta!=0.0f)
+	if(GetOwner()->HasAuthority())
 	{
-		MulticastHealthChanged(InstigatorActor,Health,ActualDelta);
-	}
 
-	//The AttributeComp's Owner Died
-	if(ActualDelta<0.0f&&Health==0.0f)
-	{
-		ABuptGameModeBase* GM=GetWorld()->GetAuthGameMode<ABuptGameModeBase>();
-		if(GM)
+		Health=NewHealth;
+		
+		if(ActualDelta!=0.0f)
 		{
-			GM->OnActorKilled(GetOwner(),InstigatorActor);
+			MulticastHealthChanged(InstigatorActor,Health,ActualDelta);
+		}
+
+		//The AttributeComp's Owner Died
+		if(ActualDelta<0.0f&&Health==0.0f)
+		{
+			ABuptGameModeBase* GM=GetWorld()->GetAuthGameMode<ABuptGameModeBase>();
+			if(GM)
+			{
+				GM->OnActorKilled(GetOwner(),InstigatorActor);
+			}
 		}
 	}
 
-	return true;
+	return ActualDelta!=0;
 }
 
 bool UBuptAttributeComponent::ApplyRage(AActor* InstigatorActor, float Delta)
 {
 	float OldRage = Rage;
 
-	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+	float NewRage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
 
-	float ActualDelta = Rage - OldRage;
-	if (ActualDelta != 0.0f)
+	float ActualDelta = NewRage - OldRage;
+
+	if(GetOwner()->HasAuthority())
 	{
-		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+		Rage=NewRage;
+		
+		if (ActualDelta != 0.0f)
+		{
+			MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
+		}
 	}
+	
 
 	return ActualDelta != 0;
 }
@@ -131,6 +144,11 @@ void UBuptAttributeComponent::MulticastHealthChanged_Implementation(AActor* Inst
 	OnHealthChanged.Broadcast(InstigatorActor,this,NewHealth,Delta);
 }
 
+void UBuptAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
+}
+
 void UBuptAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -138,5 +156,7 @@ void UBuptAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(UBuptAttributeComponent,Health);
 	DOREPLIFETIME(UBuptAttributeComponent,HealthMax);
 	// DOREPLIFETIME_CONDITION(UBuptAttributeComponent,HealthMax,COND_OwnerOnly);
+	DOREPLIFETIME(UBuptAttributeComponent,Rage);
+	DOREPLIFETIME(UBuptAttributeComponent,RageMax);
 }
 
