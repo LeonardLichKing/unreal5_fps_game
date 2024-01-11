@@ -4,10 +4,18 @@
 #include "BuptAction.h"
 
 #include "BuptActionrComponent.h"
+#include "fpsProject/fpsProject.h"
+#include "Net/UnrealNetwork.h"
+
+void UBuptAction::Initialize(UBuptActionrComponent* NewActionComp)
+{
+	ActionComp=NewActionComp;
+}
 
 void UBuptAction::StartAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp,Log,TEXT("Running: %s"),*GetNameSafe(this));
+	// UE_LOG(LogTemp,Log,TEXT("Running: %s"),*GetNameSafe(this));
+	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
 	UBuptActionrComponent* Comp=GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantTags);
@@ -17,9 +25,9 @@ void UBuptAction::StartAction_Implementation(AActor* Instigator)
 
 void UBuptAction::StopAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp,Log,TEXT("Stopped: %s"),*GetNameSafe(this));
-
-	ensureAlways(bIsRunning);
+	// UE_LOG(LogTemp,Log,TEXT("Stopped: %s"),*GetNameSafe(this));
+	LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
+	//ensureAlways(bIsRunning);
 	
 	UBuptActionrComponent* Comp=GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantTags);
@@ -30,17 +38,30 @@ void UBuptAction::StopAction_Implementation(AActor* Instigator)
 UWorld* UBuptAction::GetWorld() const
 {
 	//outer is set when creating actions when call NewObject<T>
-	UBuptActionrComponent* Comp=Cast<UBuptActionrComponent>(GetOuter());
-	if(Comp)
+	AActor* Actor = Cast<AActor>(GetOuter());
+	if (Actor)
 	{
-		return Comp->GetWorld();
+		return Actor->GetWorld();
 	}
+
 	return nullptr;
 }
 
 UBuptActionrComponent* UBuptAction::GetOwningComponent() const
 {
-	return Cast<UBuptActionrComponent>(GetOuter());
+	return ActionComp;
+}
+
+void UBuptAction::OnRep_IsRunning()
+{
+	if(bIsRunning)
+	{
+		StartAction(nullptr);
+	}
+	else
+	{
+		StopAction(nullptr);
+	}
 }
 
 bool UBuptAction::IsRunning() const
@@ -62,4 +83,12 @@ bool UBuptAction::CanStart_Implementation(AActor* Instigator)
 		return false;
 	}
 	return true;
+}
+
+void UBuptAction::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBuptAction,bIsRunning);
+	DOREPLIFETIME(UBuptAction,ActionComp);
 }

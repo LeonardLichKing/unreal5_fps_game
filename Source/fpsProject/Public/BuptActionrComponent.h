@@ -46,7 +46,7 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Actions")
 	TArray<TSubclassOf<UBuptAction>> DefaultActions;
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<UBuptAction*> Actions;
 	
 	virtual void BeginPlay() override;
@@ -55,5 +55,5 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 };

@@ -18,6 +18,9 @@ class FPSPROJECT_API UBuptAction : public UObject
 	GENERATED_BODY()
 protected:
 
+	UPROPERTY(Replicated)
+	UBuptActionrComponent* ActionComp;
+	
 	UFUNCTION(BlueprintCallable,Category="Action")
 	UBuptActionrComponent* GetOwningComponent() const;
 	
@@ -29,10 +32,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category="Tags")
 	FGameplayTagContainer BlockedTags;
 
+	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
 	bool bIsRunning;
+
+	UFUNCTION()
+	void OnRep_IsRunning();
 	
 public:
 
+	void Initialize(UBuptActionrComponent* NewActionComp);
+	
 	UPROPERTY(EditDefaultsOnly,Category="Action")
 	bool bAutoStart;
 	
@@ -53,4 +62,9 @@ public:
 	FName ActionName;
 
 	UWorld* GetWorld() const override;
+
+	bool IsSupportedForNetworking() const override
+	{
+		return true;
+	}
 };

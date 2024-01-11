@@ -4,6 +4,9 @@
 #include "BuptActionrComponent.h"
 
 #include "BuptAction.h"
+#include "Engine/ActorChannel.h"
+#include "fpsProject/fpsProject.h"
+#include "Net/UnrealNetwork.h"
 
 UBuptActionrComponent::UBuptActionrComponent()
 {
@@ -15,17 +18,31 @@ UBuptActionrComponent::UBuptActionrComponent()
 void UBuptActionrComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	for(TSubclassOf<UBuptAction> ActionClass:DefaultActions)
+
+	if(GetOwner()->HasAuthority())
 	{
-		AddAction(GetOwner(),ActionClass);
+		for(TSubclassOf<UBuptAction> ActionClass:DefaultActions)
+		{
+			AddAction(GetOwner(),ActionClass);
+		}
 	}
+	
 }
 
 void UBuptActionrComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	FString DebugMsg=GetNameSafe(GetOwner())+" : "+ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::White,DebugMsg);
+	// FString DebugMsg=GetNameSafe(GetOwner())+" : "+ActiveGameplayTags.ToStringSimple();
+	// GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::White,DebugMsg);
+
+	// Draw All Actions
+	for (UBuptAction* Action : Actions)
+	{
+		FColor TextColor = Action->IsRunning() ? FColor::Blue : FColor::White;
+		FString ActionMsg = FString::Printf(TEXT("[%s] Action: %s"), *GetNameSafe(GetOwner()), *GetNameSafe(Action));
+	
+		LogOnScreen(this, ActionMsg, TextColor, 0.0f);
+	}
 }
 
 void UBuptActionrComponent::AddAction(AActor* Instigator,TSubclassOf<UBuptAction> ActionClass)
@@ -35,9 +52,10 @@ void UBuptActionrComponent::AddAction(AActor* Instigator,TSubclassOf<UBuptAction
 		return;
 	}
 
-	UBuptAction* NewAction=NewObject<UBuptAction>(this,ActionClass);
+	UBuptAction* NewAction=NewObject<UBuptAction>(GetOwner(),ActionClass);
 	if(ensure(NewAction))
 	{
+		NewAction->Initialize(this);
 		Actions.Add(NewAction);
 
 		if(NewAction->bAutoStart&&ensure(NewAction->CanStart(Instigator)))
@@ -117,4 +135,25 @@ bool UBuptActionrComponent::StopActionByName(AActor* Instigator, FName ActionNam
 void UBuptActionrComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartActionByName(Instigator,ActionName);
+}
+
+bool UBuptActionrComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for (UBuptAction* Action : Actions)
+	{
+		if (Action)
+		{
+			WroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
+		}
+	}
+
+	return WroteSomething;
+}
+
+void UBuptActionrComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBuptActionrComponent,Actions);
 }
