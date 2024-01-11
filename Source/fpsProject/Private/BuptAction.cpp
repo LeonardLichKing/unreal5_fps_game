@@ -38,6 +38,7 @@ void UBuptAction::StopAction_Implementation(AActor* Instigator)
 UWorld* UBuptAction::GetWorld() const
 {
 	//outer is set when creating actions when call NewObject<T>
+	//Outer被设置成了拥有该action的player
 	AActor* Actor = Cast<AActor>(GetOuter());
 	if (Actor)
 	{
