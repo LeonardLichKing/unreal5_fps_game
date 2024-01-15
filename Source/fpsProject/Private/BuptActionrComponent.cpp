@@ -52,6 +52,12 @@ void UBuptActionrComponent::AddAction(AActor* Instigator,TSubclassOf<UBuptAction
 		return;
 	}
 
+	if(!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Client Attempt To AddAction. [Class:%s]"),*GetNameSafe(ActionClass));
+		return;
+	}
+	
 	UBuptAction* NewAction=NewObject<UBuptAction>(GetOwner(),ActionClass);
 	if(ensure(NewAction))
 	{
@@ -123,6 +129,12 @@ bool UBuptActionrComponent::StopActionByName(AActor* Instigator, FName ActionNam
 		{
 			if(Action->IsRunning())
 			{
+
+				if(!GetOwner()->HasAuthority())
+				{
+					ServerStopAction(Instigator,ActionName);
+				}
+				
 				Action->StopAction(Instigator);
 				return true;
 			}
@@ -135,6 +147,11 @@ bool UBuptActionrComponent::StopActionByName(AActor* Instigator, FName ActionNam
 void UBuptActionrComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartActionByName(Instigator,ActionName);
+}
+
+void UBuptActionrComponent::ServerStopAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StopActionByName(Instigator,ActionName);
 }
 
 bool UBuptActionrComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
