@@ -14,25 +14,27 @@ void UBuptAction::Initialize(UBuptActionrComponent* NewActionComp)
 
 void UBuptAction::StartAction_Implementation(AActor* Instigator)
 {
-	// UE_LOG(LogTemp,Log,TEXT("Running: %s"),*GetNameSafe(this));
-	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
+	UE_LOG(LogTemp,Log,TEXT("Running: %s"),*GetNameSafe(this));
+	// LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
 	UBuptActionrComponent* Comp=GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantTags);
 
-	bIsRunning=true;
+	RepData.bIsRunning=true;
+	RepData.Instigator=Instigator;
 }
 
 void UBuptAction::StopAction_Implementation(AActor* Instigator)
 {
-	// UE_LOG(LogTemp,Log,TEXT("Stopped: %s"),*GetNameSafe(this));
-	LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
+	UE_LOG(LogTemp,Log,TEXT("Stopped: %s"),*GetNameSafe(this));
+	// LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
 	//ensureAlways(bIsRunning);
 	
 	UBuptActionrComponent* Comp=GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantTags);
 
-	bIsRunning=false;
+	RepData.bIsRunning=false;
+	RepData.Instigator=Instigator;
 }
 
 UWorld* UBuptAction::GetWorld() const
@@ -53,26 +55,26 @@ UBuptActionrComponent* UBuptAction::GetOwningComponent() const
 	return ActionComp;
 }
 
-void UBuptAction::OnRep_IsRunning()
+void UBuptAction::OnRep_RepData()
 {
-	if(bIsRunning)
+	if(RepData.bIsRunning)
 	{
-		StartAction(nullptr);
+		StartAction(RepData.Instigator);
 	}
 	else
 	{
-		StopAction(nullptr);
+		StopAction(RepData.Instigator);
 	}
 }
 
 bool UBuptAction::IsRunning() const
 {
-	return bIsRunning;
+	return RepData.bIsRunning;
 }
 
 bool UBuptAction::CanStart_Implementation(AActor* Instigator)
 {
-	if(bIsRunning)
+	if(RepData.bIsRunning)
 	{
 		return false;
 	}
@@ -90,6 +92,6 @@ void UBuptAction::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UBuptAction,bIsRunning);
+	DOREPLIFETIME(UBuptAction,RepData);
 	DOREPLIFETIME(UBuptAction,ActionComp);
 }
