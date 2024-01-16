@@ -6,10 +6,13 @@
 #include "BuptAttributeComponent.h"
 #include "BuptCharacter.h"
 #include "BuptPlayerState.h"
+#include "BuptSaveGame.h"
 #include "EngineUtils.h"
 #include "SAdvancedRotationInputBox.h"
 #include "AI/BuptAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "GameFramework/GameStateBase.h"
+#include "Kismet/GamePlayStatics.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"),true,TEXT("Enable spawning of bots via timer"),ECVF_Cheat);
 
@@ -22,6 +25,24 @@ ABuptGameModeBase::ABuptGameModeBase()
 	RequiredPowerupDistance=2000;
 
 	PlayerStateClass=ABuptPlayerState::StaticClass();
+	SlotName="SaveGame01";
+}
+
+void ABuptGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+	LoadSaveGame();
+}
+
+void ABuptGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+
+	ABuptPlayerState* PS=NewPlayer->GetPlayerState<ABuptPlayerState>();
+	if(PS)
+	{
+		PS->LoadPlayerState(CurrentSaveGame);
+	}
 }
 
 void ABuptGameModeBase::RespawnPlayerElapsed(AController* Controller)
@@ -211,5 +232,39 @@ void ABuptGameModeBase::OnPowerupSpawnQueryCompleted(TSharedPtr<FEnvQueryResult>
 		// Keep for distance checks
 		UsedLocations.Add(PickedLocation);
 		SpawnCounter++;
+	}
+}
+
+void ABuptGameModeBase::WriteSaveGame()
+{
+	for(int32 i=0;i<GameState->PlayerArray.Num();i++)
+	{
+		ABuptPlayerState* PS=Cast<ABuptPlayerState>(GameState->PlayerArray[i]);
+		if(PS)
+		{
+			PS->SavePlayerState(CurrentSaveGame);
+			break;//single player case
+		}
+	}
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame,SlotName,0);
+}
+
+void ABuptGameModeBase::LoadSaveGame()
+{
+	if(UGameplayStatics::DoesSaveGameExist(SlotName,0))
+	{
+		CurrentSaveGame=Cast<UBuptSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName,0));
+		if(CurrentSaveGame==nullptr)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Failed To Load SaveGame Data."));
+			return;
+		}
+
+		UE_LOG(LogTemp,Log,TEXT("Load SaveGame Data."));
+	}
+	else
+	{
+		CurrentSaveGame=Cast<UBuptSaveGame>(UGameplayStatics::CreateSaveGameObject(UBuptSaveGame::StaticClass()));
+		UE_LOG(LogTemp,Log,TEXT("Create New SaveGame Data."));
 	}
 }

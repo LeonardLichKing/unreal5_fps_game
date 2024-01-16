@@ -3,6 +3,7 @@
 
 #include "BuptPlayerState.h"
 
+#include "BuptSaveGame.h"
 #include "Net/UnrealNetwork.h"
 
 void ABuptPlayerState::AddCredits(int32 Delta)
@@ -34,6 +35,22 @@ bool ABuptPlayerState::RemoveCredits(int32 Delta)
 	OnCreditsChanged.Broadcast(this,Credits,-Delta);
 
 	return true;
+}
+
+void ABuptPlayerState::LoadPlayerState_Implementation(UBuptSaveGame* SaveObject)
+{
+	if(SaveObject)
+	{
+		Credits=SaveObject->Credits;
+	}
+}
+
+void ABuptPlayerState::SavePlayerState_Implementation(UBuptSaveGame* SaveObject)
+{
+	if(SaveObject)
+	{
+		SaveObject->Credits=Credits;
+	}
 }
 
 int32 ABuptPlayerState::GetCredits() const

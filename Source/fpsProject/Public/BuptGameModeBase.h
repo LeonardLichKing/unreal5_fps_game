@@ -7,6 +7,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "BuptGameModeBase.generated.h"
 
+class UBuptSaveGame;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
@@ -18,6 +19,12 @@ class FPSPROJECT_API ABuptGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 protected:
+
+	FString SlotName;
+
+	UPROPERTY()
+	UBuptSaveGame* CurrentSaveGame;
+	
 	FTimerHandle TimerHandle_SpawnBots;
 
 	UPROPERTY(EditDefaultsOnly,Category="AI")
@@ -63,6 +70,10 @@ protected:
 	
 public:
 	ABuptGameModeBase();
+
+	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	
 	virtual void OnActorKilled(AActor* VictimActor,AActor* Killer);
 	
@@ -70,5 +81,10 @@ public:
 
 	UFUNCTION(Exec)
 	void KillAll();
+
+	UFUNCTION(BlueprintCallable,Category="Save Game")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
 };
 

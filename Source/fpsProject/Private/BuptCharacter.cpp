@@ -133,6 +133,8 @@ void ABuptCharacter::OnHealthChanged(AActor* InstigatorActor, UBuptAttributeComp
 	{
 		APlayerController* PC=Cast<APlayerController>(GetController());
 		DisableInput(PC);
+
+		SetLifeSpan(5.0f);
 	}
 }
 void ABuptCharacter::PostInitializeComponents()

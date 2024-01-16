@@ -6,7 +6,9 @@
 #include "GameFramework/PlayerState.h"
 #include "BuptPlayerState.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged,ABuptPlayerState*,PlayerState,int32,NewCredits,int32,Delta);
+class UBuptSaveGame;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, ABuptPlayerState*, PlayerState, int32, NewCredits,
+                                               int32, Delta);
 
 /**
  * 
@@ -36,5 +38,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category="Events")
 	FOnCreditsChanged OnCreditsChanged;
-	
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(UBuptSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(UBuptSaveGame* SaveObject);
 };
