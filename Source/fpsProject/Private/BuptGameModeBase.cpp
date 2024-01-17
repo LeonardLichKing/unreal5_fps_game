@@ -5,6 +5,7 @@
 
 #include "BuptAttributeComponent.h"
 #include "BuptCharacter.h"
+#include "BuptGamePlayInterface.h"
 #include "BuptPlayerState.h"
 #include "BuptSaveGame.h"
 #include "EngineUtils.h"
@@ -13,6 +14,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GamePlayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"),true,TEXT("Enable spawning of bots via timer"),ECVF_Cheat);
 
@@ -246,6 +248,31 @@ void ABuptGameModeBase::WriteSaveGame()
 			break;//single player case
 		}
 	}
+
+	CurrentSaveGame->SavedActors.Empty();
+
+	for(FActorIterator It(GetWorld());It;++It)
+	{
+		AActor* Actor=*It;
+		if(!Actor->Implements<UBuptGamePlayInterface>())
+		{
+			continue;
+		}
+
+		FActorSaveData ActorData;
+		ActorData.ActorName=Actor->GetName();
+		ActorData.Transform=Actor->GetTransform();
+
+		FMemoryWriter MemWriter(ActorData.ByteData);
+
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter,true);
+		Ar.ArIsSaveGame=true;
+		
+		Actor->Serialize(Ar);
+		
+		CurrentSaveGame->SavedActors.Add(ActorData);
+	}
+	
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame,SlotName,0);
 }
 
@@ -260,6 +287,31 @@ void ABuptGameModeBase::LoadSaveGame()
 			return;
 		}
 
+		for(FActorIterator It(GetWorld());It;++It)
+		{
+			AActor* Actor=*It;
+			if(!Actor->Implements<UBuptGamePlayInterface>())
+			{
+				continue;
+			}
+
+			for(FActorSaveData ActorData:CurrentSaveGame->SavedActors)
+			{
+				if(ActorData.ActorName==Actor->GetName())
+				{
+					Actor->SetActorTransform(ActorData.Transform);
+
+					FMemoryReader MemReader(ActorData.ByteData);
+
+					FObjectAndNameAsStringProxyArchive Ar(MemReader,true);
+					Ar.ArIsSaveGame=true;
+					Actor->Serialize(Ar);
+					IBuptGamePlayInterface::Execute_OnActorLoaded(Actor);
+					break;
+				}
+			}
+		}
+
 		UE_LOG(LogTemp,Log,TEXT("Load SaveGame Data."));
 	}
 	else
@@ -267,4 +319,5 @@ void ABuptGameModeBase::LoadSaveGame()
 		CurrentSaveGame=Cast<UBuptSaveGame>(UGameplayStatics::CreateSaveGameObject(UBuptSaveGame::StaticClass()));
 		UE_LOG(LogTemp,Log,TEXT("Create New SaveGame Data."));
 	}
+	
 }

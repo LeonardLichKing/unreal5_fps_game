@@ -26,6 +26,12 @@ void ABuptItemChest::Interact_Implementation(APawn* InstigatorPawn)
 	OnRep_LidOpened();
 }
 
+void ABuptItemChest::OnActorLoaded_Implementation()
+{
+	IBuptGamePlayInterface::OnActorLoaded_Implementation();
+	OnRep_LidOpened();
+}
+
 void ABuptItemChest::OnRep_LidOpened()
 {
 	float CurrentPitch=bLipOpened?TargetPitch:0.0f;
