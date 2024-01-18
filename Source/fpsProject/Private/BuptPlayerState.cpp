@@ -41,7 +41,9 @@ void ABuptPlayerState::LoadPlayerState_Implementation(UBuptSaveGame* SaveObject)
 {
 	if(SaveObject)
 	{
-		Credits=SaveObject->Credits;
+		// Credits=SaveObject->Credits;
+		//这样做的目的是触发OnCreditsChanged事件，以便于UI更新
+		AddCredits(SaveObject->Credits);
 	}
 }
 

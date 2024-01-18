@@ -38,13 +38,14 @@ void ABuptGameModeBase::InitGame(const FString& MapName, const FString& Options,
 
 void ABuptGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 
 	ABuptPlayerState* PS=NewPlayer->GetPlayerState<ABuptPlayerState>();
 	if(PS)
 	{
 		PS->LoadPlayerState(CurrentSaveGame);
 	}
+
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
 
 void ABuptGameModeBase::RespawnPlayerElapsed(AController* Controller)
