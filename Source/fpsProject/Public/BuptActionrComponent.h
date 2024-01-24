@@ -10,6 +10,8 @@
 
 class UBuptAction;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionStateChanged,UBuptActionrComponent*,OwningComp,UBuptAction*,Action);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FPSPROJECT_API UBuptActionrComponent : public UActorComponent
 {
@@ -49,12 +51,19 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Actions")
 	TArray<TSubclassOf<UBuptAction>> DefaultActions;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly,Replicated)
 	TArray<UBuptAction*> Actions;
 	
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStateChanged OnActionStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStateChanged OnActionStopped;
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

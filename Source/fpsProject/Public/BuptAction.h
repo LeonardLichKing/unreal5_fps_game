@@ -33,6 +33,9 @@ class FPSPROJECT_API UBuptAction : public UObject
 	GENERATED_BODY()
 protected:
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="UI")
+	UTexture2D* Icon;
+
 	UPROPERTY(Replicated)
 	UBuptActionrComponent* ActionComp;
 	
