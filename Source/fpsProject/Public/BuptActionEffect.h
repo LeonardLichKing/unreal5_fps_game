@@ -15,6 +15,9 @@ class FPSPROJECT_API UBuptActionEffect : public UBuptAction
 	GENERATED_BODY()
 
 public:
+	
+	UFUNCTION(BlueprintCallable,Category="Action")
+	float GetTimeRemaining() const;
 
 	void StartAction_Implementation(AActor* Instigator) override;
 
@@ -22,7 +25,7 @@ public:
 	
 protected:
 
-	//duration means how many times it will continue
+	//duration means how long it will continue
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Effect")
 	float Duration;
 

@@ -53,3 +53,8 @@ void UBuptActionEffect::StopAction_Implementation(AActor* Instigator)
 	}
 }
 
+float UBuptActionEffect::GetTimeRemaining() const
+{
+	float EndTime=TimeStarted+Duration;
+	return EndTime-GetWorld()->TimeSeconds;
+}
