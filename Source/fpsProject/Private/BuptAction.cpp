@@ -23,7 +23,10 @@ void UBuptAction::StartAction_Implementation(AActor* Instigator)
 	RepData.bIsRunning=true;
 	RepData.Instigator=Instigator;
 
-	TimeStarted=GetWorld()->TimeSeconds;
+	if(GetOwningComponent()->GetOwnerRole()==ROLE_Authority)
+	{
+		TimeStarted=GetWorld()->TimeSeconds;	
+	}
 	
 	GetOwningComponent()->OnActionStarted.Broadcast(GetOwningComponent(),this);
 }
@@ -100,4 +103,5 @@ void UBuptAction::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME(UBuptAction,RepData);
 	DOREPLIFETIME(UBuptAction,ActionComp);
+	DOREPLIFETIME(UBuptAction,TimeStarted);
 }

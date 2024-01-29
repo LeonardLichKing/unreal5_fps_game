@@ -3,6 +3,8 @@
 
 #include "BuptActionEffect.h"
 #include "BuptActionrComponent.h"
+#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameStateBase.h"
 
 UBuptActionEffect::UBuptActionEffect()
 {
@@ -55,6 +57,11 @@ void UBuptActionEffect::StopAction_Implementation(AActor* Instigator)
 
 float UBuptActionEffect::GetTimeRemaining() const
 {
-	float EndTime=TimeStarted+Duration;
-	return EndTime-GetWorld()->TimeSeconds;
+	AGameStateBase* GS=GetWorld()->GetGameState<AGameStateBase>();
+	if(GS)
+	{
+		float EndTime=TimeStarted+Duration;
+		return EndTime-GS->GetServerWorldTimeSeconds();
+	}
+	return Duration;
 }
