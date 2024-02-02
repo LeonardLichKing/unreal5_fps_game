@@ -21,6 +21,8 @@ public:
 	ABuptPowerupActor();
 
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	FText GetInteractText_Implementation(APawn* InstigatorPawn);
 	
 protected:
 	// Called when the game starts or when spawned

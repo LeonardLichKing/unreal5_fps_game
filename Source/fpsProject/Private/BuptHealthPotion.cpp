@@ -5,6 +5,7 @@
 
 #include "BuptAttributeComponent.h"
 #include "BuptPlayerState.h"
+#define LOCTEXT_NAMESPACE "InteractableActors"
 
 ABuptHealthPotion::ABuptHealthPotion()
 {
@@ -41,3 +42,15 @@ void ABuptHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		// }
 	}
 }
+
+FText ABuptHealthPotion::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	UBuptAttributeComponent* AttributeComp=UBuptAttributeComponent::GetAttributes(InstigatorPawn);
+	if(AttributeComp&&!AttributeComp->IsInjured())
+	{
+		return LOCTEXT("HealthPotion_FullHealthWarning","Already at full health.");
+	}
+	return FText::Format(LOCTEXT("HealthPotion_InteractMessage","Cost {0} Credits, Restore {1} health."),CreditCost,HealAmount);
+}
+
+#undef LOCTEXT_NAMESPACE

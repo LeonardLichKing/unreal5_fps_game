@@ -6,6 +6,7 @@
 #include "BuptAttributeComponent.h"
 #include "BuptCharacter.h"
 #include "BuptGamePlayInterface.h"
+#include "BuptMonsterData.h"
 #include "BuptPlayerState.h"
 #include "BuptSaveGame.h"
 #include "EngineUtils.h"
@@ -170,9 +171,17 @@ void ABuptGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapp
 
 	if(Locations.IsValidIndex(0))
 	{
-		FActorSpawnParameters Params;
-		Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		GetWorld()->SpawnActor<AActor>(MinionClass,Locations[0],FRotator::ZeroRotator,Params);
+		if(MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonsterTable->GetAllRows("",Rows);
+
+			//Get Random Enemy
+			int32 RandomIndex=FMath::RandRange(0,Rows.Num()-1);
+			FMonsterInfoRow* SeletedRow=Rows[RandomIndex];
+
+			GetWorld()->SpawnActor<AActor>(SeletedRow->MonsterData->MonsterClass,Locations[0],FRotator::ZeroRotator);
+		}
 	}
 }
 

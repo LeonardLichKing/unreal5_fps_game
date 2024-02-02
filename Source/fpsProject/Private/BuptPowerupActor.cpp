@@ -61,3 +61,7 @@ void ABuptPowerupActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ABuptPowerupActor, bIsActive);
 }
 
+FText ABuptPowerupActor::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}
