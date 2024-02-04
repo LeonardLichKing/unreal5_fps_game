@@ -29,7 +29,7 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	UBuptMonsterData* MonsterData;
+	FPrimaryAssetId MonsterId;
 	
 	// UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	// TSubclassOf<AActor> MonsterClass;
@@ -94,6 +94,8 @@ protected:
 
 	UFUNCTION()
 	void OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId,FVector SpawnLocation);
 	
 	void OnPowerupSpawnQueryCompleted(TSharedPtr<FEnvQueryResult> Result);
 	

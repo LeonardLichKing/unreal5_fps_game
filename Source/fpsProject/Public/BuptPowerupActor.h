@@ -6,7 +6,7 @@
 #include "BuptGamePlayInterface.h"
 #include "GameFramework/Actor.h"
 #include "BuptPowerupActor.generated.h"
-//´ËÀàÊÇËùÓĞ½»»¥ÎïÆ·µÄ»ùÀà£¬ºóĞøÒªÊµÏÖµÄÀàµÄ¶¼¼Ì³ĞÓÚ´ËÀà£¬Òò´Ë´ËÀàĞèÒª¶¨ÒåËùÓĞ¿É½»»¥ÎïÆ·µÄ¹²Í¬²Ù×÷
+//æ­¤ç±»æ˜¯æ‰€æœ‰äº¤äº’ç‰©å“çš„åŸºç±»ï¼Œåç»­è¦å®ç°çš„ç±»çš„éƒ½ç»§æ‰¿äºæ­¤ç±»ï¼Œå› æ­¤æ­¤ç±»éœ€è¦å®šä¹‰æ‰€æœ‰å¯äº¤äº’ç‰©å“çš„å…±åŒæ“ä½œ
 
 class USphereComponent;
 class UStaticMeshComponent;

@@ -3,6 +3,7 @@
 
 #include "BuptGameModeBase.h"
 
+#include "BuptActionrComponent.h"
 #include "BuptAttributeComponent.h"
 #include "BuptCharacter.h"
 #include "BuptGamePlayInterface.h"
@@ -12,7 +13,9 @@
 #include "EngineUtils.h"
 #include "SAdvancedRotationInputBox.h"
 #include "AI/BuptAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "fpsProject/fpsProject.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GamePlayStatics.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
@@ -180,7 +183,45 @@ void ABuptGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapp
 			int32 RandomIndex=FMath::RandRange(0,Rows.Num()-1);
 			FMonsterInfoRow* SeletedRow=Rows[RandomIndex];
 
-			GetWorld()->SpawnActor<AActor>(SeletedRow->MonsterData->MonsterClass,Locations[0],FRotator::ZeroRotator);
+			UAssetManager* Manager=UAssetManager::GetIfValid();
+			if(Manager)
+			{
+				LogOnScreen(this, "Start loading.", FColor::Red);
+				TArray<FName> Bundles;
+
+				FStreamableDelegate Delegate=FStreamableDelegate::CreateUObject(this,&ABuptGameModeBase::OnMonsterLoaded,SeletedRow->MonsterId,Locations[0]);;
+				
+				Manager->LoadPrimaryAsset(SeletedRow->MonsterId,Bundles,Delegate);
+			}
+			
+		}
+	}
+}
+
+void ABuptGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	UAssetManager* Manager=UAssetManager::GetIfValid();
+	if(Manager)
+	{
+		UBuptMonsterData* MonsterData=Cast<UBuptMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+		if(MonsterData)
+		{
+			//AlwaysSpawn±ØÐëÉèÖÃ
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AActor* NewBot=GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass,SpawnLocation,FRotator::ZeroRotator,Params);
+			if(NewBot)
+			{
+				LogOnScreen(this,FString::Printf(TEXT("Spawn enemy: %s (%s)"),*GetNameSafe(NewBot),*GetNameSafe(MonsterData)));
+				UBuptActionrComponent* ActionComp=Cast<UBuptActionrComponent>(NewBot->GetComponentByClass(UBuptActionrComponent::StaticClass()));
+				if(ActionComp)
+				{
+					for(TSubclassOf<UBuptAction>ActionClass:MonsterData->Actions)
+					{
+						ActionComp->AddAction(NewBot,ActionClass);
+					}
+				}
+			}
 		}
 	}
 }
