@@ -11,7 +11,6 @@
 #include "BuptPlayerState.h"
 #include "BuptSaveGame.h"
 #include "EngineUtils.h"
-#include "SAdvancedRotationInputBox.h"
 #include "AI/BuptAICharacter.h"
 #include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"

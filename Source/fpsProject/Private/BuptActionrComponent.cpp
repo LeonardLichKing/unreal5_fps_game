@@ -8,6 +8,8 @@
 #include "fpsProject/fpsProject.h"
 #include "Net/UnrealNetwork.h"
 
+DECLARE_CYCLE_STAT(TEXT("StartActionByName"),STAT_StartActionByName,STATGROUP_STANFORD);
+
 UBuptActionrComponent::UBuptActionrComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -97,6 +99,8 @@ UBuptAction* UBuptActionrComponent::GetAction(TSubclassOf<UBuptAction> ActionCla
 
 bool UBuptActionrComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
+	SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
+	
 	for(UBuptAction* Action:Actions)
 	{
 		if(Action&&Action->ActionName==ActionName)
@@ -112,6 +116,8 @@ bool UBuptActionrComponent::StartActionByName(AActor* Instigator, FName ActionNa
 			{
 				ServerStartAction(Instigator,ActionName);
 			}
+
+			TRACE_BOOKMARK(TEXT("StartAction::%s"),*GetNameSafe(Action));
 			
 			Action->StartAction(Instigator);
 			return true;
