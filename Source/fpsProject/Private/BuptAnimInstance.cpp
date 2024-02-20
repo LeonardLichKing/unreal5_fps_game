@@ -25,11 +25,11 @@ void UBuptAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		bIsStunned=ActionComp->ActiveGameplayTags.HasTag(StunnedTag);
 
-		UE_LOG(LogTemp, Warning, TEXT("bIsStunned is: %s"), bIsStunned ? TEXT("true") : TEXT("false"));
-		// 打印出 ActiveGameplayTags 中的所有标签，以确保 "Status.Stunned" 存在
-		for (const FGameplayTag& Tag : ActionComp->ActiveGameplayTags)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Active Gameplay Tag: %s"), *Tag.ToString());
-		}
+		// UE_LOG(LogTemp, Warning, TEXT("bIsStunned is: %s"), bIsStunned ? TEXT("true") : TEXT("false"));
+		// // 打印出 ActiveGameplayTags 中的所有标签，以确保 "Status.Stunned" 存在
+		// for (const FGameplayTag& Tag : ActionComp->ActiveGameplayTags)
+		// {
+		// 	UE_LOG(LogTemp, Warning, TEXT("Active Gameplay Tag: %s"), *Tag.ToString());
+		// }
 	}
 }

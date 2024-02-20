@@ -31,6 +31,20 @@ void UBuptActionrComponent::BeginPlay()
 	
 }
 
+void UBuptActionrComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	TArray<UBuptAction*> ActionsCopy=Actions;
+	for(UBuptAction* Action:ActionsCopy)
+	{
+		if(Action&&Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 void UBuptActionrComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
